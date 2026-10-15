@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { crearApp } from '../../src/app.js';
+import { consultar } from '../../src/config/db.js';
 import {
   vaciarTablas,
   insertarUsuario,
@@ -20,10 +21,11 @@ async function tokenDe(correo) {
 
 describe('Contrato de gestión de usuarios', () => {
   let tokenAdmin;
+  let idAdmin;
 
   beforeAll(async () => {
     await vaciarTablas();
-    await insertarUsuario({
+    idAdmin = await insertarUsuario({
       nombre: 'Admin Contrato',
       correo: 'admin-contrato@prueba.com',
       rol: 'administrador',
@@ -119,5 +121,70 @@ describe('Contrato de gestión de usuarios', () => {
     expect(Array.isArray(respuesta.body.data)).toBe(true);
     expect(respuesta.body.data.length).toBeGreaterThanOrEqual(2);
     expect(respuesta.body.data[0].password).toBeUndefined();
+  });
+
+  // --- Auditoría de usuarios (A11, FR-021, SC-003, regla X.3) — T018 ---
+
+  it('registra en auditoría la creación, la modificación y los rechazos sin exponer contraseñas', async () => {
+    const clave = 'AuditoriaClave1';
+    const creacion = await request(app)
+      .post('/api/usuarios')
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({
+        nombre: 'Auditado',
+        correo: 'auditado@prueba.com',
+        password: clave,
+        rol: 'recepcionista',
+      });
+    expect(creacion.status).toBe(201);
+    const idAuditado = creacion.body.data.id_usuario;
+
+    const modificacion = await request(app)
+      .put(`/api/usuarios/${idAuditado}`)
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({ nombre: 'Auditado Modificado', password: 'OtraClave123' });
+    expect(modificacion.status).toBe(200);
+
+    const filas = await consultar(
+      `SELECT id_usuario, accion, resultado, descripcion
+       FROM auditoria
+       WHERE modulo = 'usuarios'
+       ORDER BY id_auditoria`
+    );
+
+    const creacionFila = filas.find(
+      (f) =>
+        f.accion === 'crear_usuario' &&
+        (f.descripcion || '').includes('auditado@prueba.com')
+    );
+    const modificacionFila = filas.find(
+      (f) =>
+        f.accion === 'modificar_usuario' &&
+        (f.descripcion || '').includes(`#${idAuditado}`)
+    );
+    const rechazoFila = filas.find(
+      (f) => f.accion === 'crear_usuario' && f.resultado === 'rechazado'
+    );
+
+    expect(creacionFila).toBeDefined();
+    expect(creacionFila.resultado).toBe('exitoso');
+    expect(creacionFila.id_usuario).toBe(idAdmin);
+
+    expect(modificacionFila).toBeDefined();
+    expect(modificacionFila.resultado).toBe('exitoso');
+    expect(modificacionFila.id_usuario).toBe(idAdmin);
+
+    // El correo duplicado del caso anterior queda como rechazo (A11).
+    expect(rechazoFila).toBeDefined();
+    expect(rechazoFila.resultado).toBe('rechazado');
+
+    // Regla X.3: jamás contraseñas ni hashes en las descripciones.
+    for (const fila of [creacionFila, modificacionFila, rechazoFila]) {
+      expect(fila.descripcion).not.toContain(clave);
+      expect(fila.descripcion).not.toContain('OtraClave123');
+      expect(fila.descripcion).not.toContain('NuevaClave1');
+      expect(fila.descripcion).not.toMatch(/\$2[aby]\$/);
+      expect(fila.descripcion).not.toContain('password');
+    }
   });
 });

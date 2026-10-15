@@ -42,18 +42,24 @@ export async function crear({ nombre, correo, password, rol, estado = 'activo' }
   return resultado.insertId;
 }
 
-/** Actualiza los campos indicados de un usuario. */
-export async function modificar(id, campos) {
+/** Actualiza los campos indicados de un usuario. Si se entrega una `conexion`
+ *  (transacción abierta), la sentencia se ejecuta sobre esa conexión; en caso
+ *  contrario, sobre el pool. */
+export async function modificar(id, campos, conexion = null) {
   const permitidos = ['nombre', 'correo', 'password', 'rol', 'estado'];
   const usados = Object.keys(campos).filter((c) => permitidos.includes(c));
   if (usados.length === 0) return false;
 
   const asignaciones = usados.map((c) => `${c} = ?`).join(', ');
   const valores = usados.map((c) => campos[c]);
-  const resultado = await ejecutar(
-    `UPDATE usuarios SET ${asignaciones} WHERE id_usuario = ?`,
-    [...valores, id]
-  );
+  const sql = `UPDATE usuarios SET ${asignaciones} WHERE id_usuario = ?`;
+  const parametros = [...valores, id];
+
+  if (conexion) {
+    const [resultado] = await conexion.execute(sql, parametros);
+    return resultado.affectedRows > 0;
+  }
+  const resultado = await ejecutar(sql, parametros);
   return resultado.affectedRows > 0;
 }
 
@@ -73,4 +79,29 @@ export async function correoExisteEnOtro(correo, idExcluir) {
     [correo, idExcluir]
   );
   return filas.length > 0;
+}
+
+/** Devuelve el usuario con bloqueo FOR UPDATE dentro de una transacción
+ *  (FR-014): congela la fila mientras se verifica el último administrador. */
+export async function obtenerConBloqueo(id, conexion) {
+  const [filas] = await conexion.query(
+    `SELECT id_usuario, nombre, rol, estado
+     FROM usuarios
+     WHERE id_usuario = ?
+     FOR UPDATE`,
+    [id]
+  );
+  return filas[0] || null;
+}
+
+/** Cuenta los administradores activos con bloqueo FOR UPDATE (FR-014): el
+ *  bloqueo serializa verificaciones concurrentes del último administrador. */
+export async function contarAdministradoresActivos(conexion) {
+  const [filas] = await conexion.query(
+    `SELECT COUNT(*) AS total
+     FROM usuarios
+     WHERE rol = 'administrador' AND estado = 'activo'
+     FOR UPDATE`
+  );
+  return Number(filas[0].total);
 }
