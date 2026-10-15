@@ -81,16 +81,7 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
-.pagina-login {
-  display: flex;
-  justify-content: center;
-  padding: 3rem 1rem;
-}
-
-.pagina-login .tarjeta {
-  width: 100%;
-  max-width: 380px;
-}
+/* Bloque de login reescrito en el rediseño (US6): ver el final del archivo. */
 
 label {
   display: block;
@@ -194,4 +185,228 @@ button.peligro {
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 0.25rem;
+}
+
+/* --- Rediseño del inicio de sesión (US6 / A12, FR-027 a FR-032) ---
+   Solo afecta a `.pagina-login`; el resto de páginas conserva su estilo. */
+
+.pagina-login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* FR-027: división 50/50 en escritorio */
+  background: #0a0b0e;
+  color: #e4e7eb;
+  overflow-x: hidden; /* FR-030: sin desbordamiento horizontal */
+}
+
+/* Estados de foco visibles en toda la aplicación (FR-031). */
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #f05a24;
+  outline-offset: 2px;
+}
+
+/* Panel izquierdo de presentación (FR-028). */
+.pagina-login .presentacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  background: #0a0b0e;
+}
+
+.pagina-login .marca-gran {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f05a24;
+}
+
+.pagina-login .titulo-principal {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  line-height: 1.2;
+  color: #f5f7fa;
+}
+
+.pagina-login .resalte {
+  color: #f05a24; /* acento naranja del título */
+}
+
+/* Tarjeta de reconocimiento facial: SIEMPRE demostrativa (FR-028/R7). */
+.pagina-login .tarjeta-facial {
+  background: #0f1117;
+  border: 1px solid #232734;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  max-width: 360px;
+}
+
+.pagina-login .tarjeta-facial p {
+  margin: 0.35rem 0;
+}
+
+.pagina-login .demo-etiqueta {
+  display: inline-block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9aa5b1;
+  border: 1px solid #3e4c59;
+  border-radius: 999px;
+  padding: 0.15rem 0.65rem;
+}
+
+.pagina-login .puntos {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
+.pagina-login .puntos span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3e4c59;
+}
+
+.pagina-login .puntos span.activo {
+  background: #f05a24;
+}
+
+/* Columna derecha: el formulario sobre #0f1117 (FR-027). */
+.pagina-login .zona-formulario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.pagina-login .tarjeta {
+  width: 100%;
+  max-width: 400px;
+  background: #0f1117;
+  border: 1px solid #232734;
+  color: #e4e7eb;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  animation: login-aparecer 0.25s ease-out; /* sutil y breve (FR-032) */
+}
+
+.pagina-login h1 {
+  color: #f5f7fa;
+}
+
+.pagina-login .subtitulo {
+  color: #9aa5b1;
+}
+
+.pagina-login label {
+  color: #cbd2d9;
+}
+
+.pagina-login input {
+  background: #0a0b0e;
+  border: 1px solid #2b3140;
+  color: #f5f7fa;
+}
+
+/* Contraseña con control mostrar/ocultar (FR-029). */
+.pagina-login .campo-password {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.pagina-login .campo-password input {
+  flex: 1;
+  min-width: 0;
+}
+
+.pagina-login .alternar-password {
+  margin-top: 0;
+  padding: 0.4rem 0.75rem;
+  background: #232734;
+  border: 1px solid #2b3140;
+  color: #f5f7fa;
+  cursor: pointer;
+}
+
+.pagina-login .alternar-password:hover {
+  background: #2b3140;
+}
+
+.pagina-login button[type='submit'] {
+  width: 100%;
+  background: #f05a24;
+}
+
+.pagina-login button[type='submit']:hover {
+  background: #d94c1c;
+}
+
+.pagina-login button[type='submit']:disabled {
+  background: #3e4c59;
+  color: #cbd2d9;
+}
+
+.pagina-login .enlace-soporte {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #cbd2d9;
+  font-size: 0.9rem;
+}
+
+.pagina-login .enlace-soporte:hover {
+  color: #f05a24;
+}
+
+@keyframes login-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* FR-030: panel oculto y formulario centrado a pantalla completa ≤768 px. */
+@media (max-width: 768px) {
+  .pagina-login {
+    grid-template-columns: 1fr;
+  }
+
+  .pagina-login .presentacion {
+    display: none;
+  }
+
+  .pagina-login .zona-formulario {
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Holgura extra en pantallas mínimas (desde 320 px, FR-030). */
+@media (max-width: 360px) {
+  .pagina-login .zona-formulario {
+    padding: 1.25rem 0.75rem;
+  }
+}
+
+/* FR-032: respeto de la preferencia de movimiento reducido. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
