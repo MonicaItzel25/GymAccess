@@ -3,7 +3,40 @@
 // las reglas de validación del data-model.md. ES Modules.
 
 import * as modelo from '../models/cliente.model.js';
+import * as auditoria from './auditoria.service.js';
 import { ErrorServicio } from '../utils/errorServicio.js';
+
+/**
+ * Ejecuta la operación y registra la acción en `auditoria` (A11, FR-021,
+ * constitución X.1): `exitoso`, `rechazado` (ErrorServicio) o `error`
+ * (fallo inesperado). La descripción NUNCA incluye credenciales (X.3).
+ * `registrarAccion` nunca lanza: un fallo al auditar no interrumpe la
+ * operación principal. (Misma pauta que usuario.service.js.)
+ */
+async function conAuditoria({ idUsuario = null, accion, descripcion, operacion }) {
+  try {
+    const datos = await operacion();
+    await auditoria.registrarAccion({
+      idUsuario,
+      accion,
+      modulo: 'clientes',
+      resultado: 'exitoso',
+      descripcion,
+    });
+    return datos;
+  } catch (error) {
+    const resultado = error instanceof ErrorServicio ? 'rechazado' : 'error';
+    const detalle = `${descripcion} — ${resultado}: ${error.message}`.slice(0, 255);
+    await auditoria.registrarAccion({
+      idUsuario,
+      accion,
+      modulo: 'clientes',
+      resultado,
+      descripcion: detalle,
+    });
+    throw error;
+  }
+}
 
 /** Lista los clientes; si `basicos` es true devuelve solo campos básicos. */
 export async function listar({ buscar = '', basicos = false } = {}) {
@@ -25,23 +58,34 @@ export async function obtener(id, { basico = false } = {}) {
   return cliente;
 }
 
-/** Registra un cliente; el correo no puede duplicarse (FR-014). */
-export async function crear({ nombre, apellido, correo, telefono, direccion, estado = 'activo' }) {
-  const correoLimpio = correo ? correo.trim() : null;
-  if (correoLimpio && (await modelo.correoExisteEnOtro(correoLimpio))) {
-    throw new ErrorServicio('El correo ya está registrado', 409);
-  }
+/** Registra un cliente; el correo no puede duplicarse (FR-014).
+ *  Audita creación, rechazos y fallos con el actor indicado (A11). */
+export async function crear(
+  { nombre, apellido, correo, telefono, direccion, estado = 'activo' },
+  idUsuario = null
+) {
+  return conAuditoria({
+    idUsuario,
+    accion: 'crear_cliente',
+    descripcion: `Cliente "${nombre} ${apellido}" creado`,
+    operacion: async () => {
+      const correoLimpio = correo ? correo.trim() : null;
+      if (correoLimpio && (await modelo.correoExisteEnOtro(correoLimpio))) {
+        throw new ErrorServicio('El correo ya está registrado', 409);
+      }
 
-  const id = await modelo.crear({
-    nombre,
-    apellido,
-    correo: correoLimpio || null,
-    telefono: telefono || null,
-    direccion: direccion || null,
-    estado,
+      const id = await modelo.crear({
+        nombre,
+        apellido,
+        correo: correoLimpio || null,
+        telefono: telefono || null,
+        direccion: direccion || null,
+        estado,
+      });
+
+      return modelo.obtenerPorId(id);
+    },
   });
-
-  return modelo.obtenerPorId(id);
 }
 
 /** Indica si un correo ya pertenece a otro cliente (unicidad, FR-014). */
@@ -49,20 +93,33 @@ export async function existeCorreoDeOtroCliente(correo, idCliente) {
   return modelo.correoExisteEnOtro(correo, idCliente);
 }
 
-/** Actualiza un cliente; valida unicidad de correo y existencia (FR-010). */
-export async function actualizar(id, campos) {
-  await obtener(id); // 404 si no existe
+/** Actualiza un cliente; valida unicidad de correo y existencia (FR-010).
+ *  Audita la modificación con el actor indicado (A11). */
+export async function actualizar(id, campos, idUsuario = null) {
+  const camposModificados = Object.keys(campos).filter((c) =>
+    ['nombre', 'apellido', 'correo', 'telefono', 'direccion', 'estado'].includes(c)
+  );
+  const detalle = camposModificados.join(', ') || 'ninguno';
 
-  if (campos.correo) {
-    const correoLimpio = campos.correo.trim();
-    if (await existeCorreoDeOtroCliente(correoLimpio, id)) {
-      throw new ErrorServicio('El correo ya está registrado', 409);
-    }
-    campos = { ...campos, correo: correoLimpio };
-  }
+  return conAuditoria({
+    idUsuario,
+    accion: 'modificar_cliente',
+    descripcion: `Cliente #${id} modificado (campos: ${detalle})`,
+    operacion: async () => {
+      await obtener(id); // 404 si no existe
 
-  await modelo.actualizar(id, campos);
-  return modelo.obtenerPorId(id);
+      if (campos.correo) {
+        const correoLimpio = campos.correo.trim();
+        if (await existeCorreoDeOtroCliente(correoLimpio, id)) {
+          throw new ErrorServicio('El correo ya está registrado', 409);
+        }
+        campos = { ...campos, correo: correoLimpio };
+      }
+
+      await modelo.actualizar(id, campos);
+      return modelo.obtenerPorId(id);
+    },
+  });
 }
 
 /** Devuelve la información propia de un cliente a partir de su correo.

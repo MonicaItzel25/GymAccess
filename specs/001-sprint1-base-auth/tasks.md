@@ -179,9 +179,9 @@ entrenador solo recibe `id_cliente`, `nombre`, `apellido`, `telefono`, `estado`.
 
 ### Implementación para la historia 4
 
-- [ ] T020 [US4] Agregar el registro de auditoría de clientes (A11) en `backend/src/services/cliente.service.js` invocando `registrarAccion` de `backend/src/services/auditoria.service.js` en `crear` y `actualizar`, con `modulo` `clientes`, resultado y descripción sin credenciales (regla X.3)
-- [ ] T021 [US4] Ampliar `backend/tests/contract/clientes.contract.test.js` con la verificación de filas en `auditoria` tras crear y modificar clientes, y confirmar en `backend/tests/contract/clientes-consulta.contract.test.js` el recorte básico del entrenador (`id_cliente`, `nombre`, `apellido`, `telefono`, `estado`) autorizado por A16
-- [ ] T022 [US4] Ejecutar `npm test` en `backend/` (con la cadena de `gym_db_pruebas` verificada, ver T008) y dejar en verde las suites `clientes.contract.test.js`, `clientes-consulta.contract.test.js`, `clientes-edicion.contract.test.js` y `clientes.integration.test.js`, incluido el rechazo `404 Recurso no encontrado` de `DELETE` (FR-021, sin borrado físico)
+- [X] T020 [US4] Agregar el registro de auditoría de clientes (A11) en `backend/src/services/cliente.service.js` invocando `registrarAccion` de `backend/src/services/auditoria.service.js` en `crear` y `actualizar`, con `modulo` `clientes`, resultado y descripción sin credenciales (regla X.3)
+- [X] T021 [US4] Ampliar `backend/tests/contract/clientes.contract.test.js` con la verificación de filas en `auditoria` tras crear y modificar clientes, y confirmar en `backend/tests/contract/clientes-consulta.contract.test.js` el recorte básico del entrenador (`id_cliente`, `nombre`, `apellido`, `telefono`, `estado`) autorizado por A16
+- [X] T022 [US4] Ejecutar `npm test` en `backend/` (con la cadena de `gym_db_pruebas` verificada, ver T008) y dejar en verde las suites `clientes.contract.test.js`, `clientes-consulta.contract.test.js`, `clientes-edicion.contract.test.js` y `clientes.integration.test.js`, incluido el rechazo `404 Recurso no encontrado` de `DELETE` (FR-021, sin borrado físico)
 
 **Checkpoint**: la historia 4 queda funcional y verificable de forma independiente.
 

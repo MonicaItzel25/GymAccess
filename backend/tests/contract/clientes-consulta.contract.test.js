@@ -143,4 +143,18 @@ describe('Contrato de consulta de clientes', () => {
 
     expect(respuesta.status).toBe(404);
   });
+
+  it('el entrenador recibe solo campos básicos en GET /api/clientes/:id (A16)', async () => {
+    const respuesta = await request(app)
+      .get(`/api/clientes/${idBuscado}`)
+      .set('Authorization', `Bearer ${tokenEntrenador}`);
+
+    expect(respuesta.status).toBe(200);
+    expect(Object.keys(respuesta.body.data).sort()).toEqual(
+      ['apellido', 'estado', 'id_cliente', 'nombre', 'telefono'].sort()
+    );
+    expect(respuesta.body.data.correo).toBeUndefined();
+    expect(respuesta.body.data.direccion).toBeUndefined();
+    expect(respuesta.body.data.fecha_registro).toBeUndefined();
+  });
 });

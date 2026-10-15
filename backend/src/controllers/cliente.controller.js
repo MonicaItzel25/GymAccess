@@ -8,7 +8,7 @@ import { enviarOk, envolverControlador } from '../utils/response.js';
 
 /** POST /api/clientes */
 export const crear = envolverControlador(async (req, res) => {
-  const cliente = await servicio.crear(req.body);
+  const cliente = await servicio.crear(req.body, req.usuario.id_usuario);
   return enviarOk(res, cliente, 201);
 });
 
@@ -31,7 +31,11 @@ export const obtener = envolverControlador(async (req, res) => {
 
 /** PUT /api/clientes/:id */
 export const actualizar = envolverControlador(async (req, res) => {
-  const cliente = await servicio.actualizar(Number(req.params.id), req.body);
+  const cliente = await servicio.actualizar(
+    Number(req.params.id),
+    req.body,
+    req.usuario.id_usuario
+  );
   return enviarOk(res, cliente);
 });
 
