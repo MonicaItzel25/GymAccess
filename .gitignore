@@ -1,0 +1,39 @@
+# Variables de entorno (nunca subir credenciales reales)
+# Cubre backend/.env, backend/.env.test y cualquier .env.* en subcarpetas.
+.env
+.env.*
+!.env.example
+
+# Estado local de la herramienta (los comandos sí se versionan)
+.opencode/*
+!.opencode/commands/
+
+# Dependencias Node.js
+node_modules/
+
+# Compilación y salida
+dist/
+build/
+coverage/
+
+# Registros
+*.log
+npm-debug.log*
+
+# Archivos físicos de MySQL (nunca versionar)
+*.ibd
+*.frm
+*.myd
+*.myi
+ibdata*
+ib_logfile*
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Editores
+.vscode/
+.idea/
