@@ -95,4 +95,62 @@ describe('Contrato de información propia del cliente', () => {
     expect(respuesta.status).toBe(404);
     expect(respuesta.body.message).toContain('No existe un cliente');
   });
+
+  // --- Vinculación de cuenta con cliente (A15 / FR-023) — T024 ---
+
+  it('POST /api/usuarios con rol cliente y ficha de cliente coincide devuelve 201', async () => {
+    await insertarCliente({
+      nombre: 'Nuevo',
+      apellido: 'Cliente',
+      correo: 'nuevo-cliente@prueba.com',
+    });
+
+    const respuesta = await request(app)
+      .post('/api/usuarios')
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({
+        nombre: 'Cuenta Cliente',
+        correo: '  NUEVO-CLIENTE@PRUEBA.COM  ',
+        password: 'NuevaCuenta1',
+        rol: 'cliente',
+      });
+
+    expect(respuesta.status).toBe(201);
+    expect(respuesta.body.data.rol).toBe('cliente');
+    expect(respuesta.body.data.correo).toBe('nuevo-cliente@prueba.com');
+    expect(respuesta.body.data.password).toBeUndefined();
+  });
+
+  it('POST /api/usuarios con rol cliente sin ficha de cliente coincide devuelve 400', async () => {
+    const respuesta = await request(app)
+      .post('/api/usuarios')
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({
+        nombre: 'Sin Ficha',
+        correo: 'sin-ficha@prueba.com',
+        password: 'NuevaCuenta1',
+        rol: 'cliente',
+      });
+
+    expect(respuesta.status).toBe(400);
+    expect(respuesta.body.ok).toBe(false);
+    expect(respuesta.body.message).toBe(
+      'el correo no coincide con ningún cliente registrado'
+    );
+  });
+
+  it('POST /api/usuarios con rol cliente y correo de usuario ya registrado devuelve 409', async () => {
+    const respuesta = await request(app)
+      .post('/api/usuarios')
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({
+        nombre: 'Duplicado Vínculo',
+        correo: 'propietario@prueba.com',
+        password: 'NuevaCuenta1',
+        rol: 'cliente',
+      });
+
+    expect(respuesta.status).toBe(409);
+    expect(respuesta.body.message).toContain('registrado');
+  });
 });

@@ -7,6 +7,7 @@ import { consultar } from '../../src/config/db.js';
 import {
   vaciarTablas,
   insertarUsuario,
+  insertarCliente,
   cerrarPool,
 } from '../helpers/baseDatos.js';
 
@@ -82,5 +83,52 @@ describe('Integración de registro de clientes', () => {
 
     expect(respuesta.status).toBe(201);
     expect(respuesta.body.data.correo).toBeNull();
+  });
+
+  // --- FR-010 y FR-025 — T025 ---
+
+  it('FR-010: la cuenta activa inicia sesión y consulta su ficha aunque el registro del cliente esté inactivo', async () => {
+    await insertarUsuario({
+      nombre: 'Cliente Cuenta Activa',
+      correo: 'cuenta-activa@prueba.com',
+      rol: 'cliente',
+    });
+    await insertarCliente({
+      nombre: 'Ficha',
+      apellido: 'Inactiva',
+      correo: 'cuenta-activa@prueba.com',
+      estado: 'inactivo',
+    });
+
+    const token = await tokenDe('cuenta-activa@prueba.com');
+    expect(token).toBeTruthy();
+
+    const respuesta = await request(app)
+      .get('/api/clientes/mio')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(respuesta.status).toBe(200);
+    expect(respuesta.body.data.correo).toBe('cuenta-activa@prueba.com');
+    expect(respuesta.body.data.estado).toBe('inactivo');
+  });
+
+  it('FR-025: el rol cliente recibe 403 al consultar una ficha ajena y no ve sus datos', async () => {
+    const idTercero = await insertarCliente({
+      nombre: 'Tercero',
+      apellido: 'Ajeno',
+      correo: 'tercero@prueba.com',
+      telefono: '555-7777',
+    });
+    const token = await tokenDe('cuenta-activa@prueba.com');
+
+    const respuesta = await request(app)
+      .get(`/api/clientes/${idTercero}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(respuesta.status).toBe(403);
+    expect(respuesta.body.ok).toBe(false);
+    expect(respuesta.body.data).toBeUndefined();
+    expect(JSON.stringify(respuesta.body)).not.toContain('Tercero');
+    expect(JSON.stringify(respuesta.body)).not.toContain('555-7777');
   });
 });

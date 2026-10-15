@@ -199,9 +199,9 @@ consulta `/api/clientes/mio` y ve solo su ficha.
 
 ### Implementación para la historia 5
 
-- [ ] T023 [US5] Implementar A15/FR-023 en `backend/src/services/usuario.service.js`: en `crear`, si `rol` es `cliente`, exigir que el `correo` normalizado (sin espacios extremos, insensible a mayúsculas) coincida con el `correo` de un registro `clientes` existente y sin cuenta vinculada; si no coincide responder `ErrorServicio` con `400` y mensaje `el correo no coincide con ningún cliente registrado`; un cliente sin `correo` no puede recibir cuenta
-- [ ] T024 [US5] Ampliar `backend/tests/contract/clientes-mio.contract.test.js` con la creación de cuenta `cliente` válida (201, con cliente coincidente) e inválida (400 sin cliente coincidente; 409 con correo de usuario ya registrado), conservando el 404 `No existe un cliente asociado a esta cuenta` de `/api/clientes/mio` sin vínculo
-- [ ] T025 [US5] Agregar en `backend/tests/integration/clientes.integration.test.js` la verificación de FR-010: cliente con cuenta `activa` y registro `inactivo` inicia sesión y consulta su ficha; y de FR-025: la consulta ajena a `/api/clientes/:id` desde el rol `cliente` responde `403` sin datos de terceros
+- [X] T023 [US5] Implementar A15/FR-023 en `backend/src/services/usuario.service.js`: en `crear`, si `rol` es `cliente`, exigir que el `correo` normalizado (sin espacios extremos, insensible a mayúsculas) coincida con el `correo` de un registro `clientes` existente y sin cuenta vinculada; si no coincide responder `ErrorServicio` con `400` y mensaje `el correo no coincide con ningún cliente registrado`; un cliente sin `correo` no puede recibir cuenta
+- [X] T024 [US5] Ampliar `backend/tests/contract/clientes-mio.contract.test.js` con la creación de cuenta `cliente` válida (201, con cliente coincidente) e inválida (400 sin cliente coincidente; 409 con correo de usuario ya registrado), conservando el 404 `No existe un cliente asociado a esta cuenta` de `/api/clientes/mio` sin vínculo
+- [X] T025 [US5] Agregar en `backend/tests/integration/clientes.integration.test.js` la verificación de FR-010: cliente con cuenta `activa` y registro `inactivo` inicia sesión y consulta su ficha; y de FR-025: la consulta ajena a `/api/clientes/:id` desde el rol `cliente` responde `403` sin datos de terceros
 
 **Checkpoint**: todas las historias de negocio (US1–US5) funcionan de forma independiente.
 

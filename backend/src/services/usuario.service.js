@@ -5,6 +5,7 @@
 
 import bcrypt from 'bcrypt';
 import * as modelo from '../models/usuario.model.js';
+import * as modeloCliente from '../models/cliente.model.js';
 import * as auditoria from './auditoria.service.js';
 import { obtenerPool } from '../config/db.js';
 import { ErrorServicio } from '../utils/errorServicio.js';
@@ -70,6 +71,18 @@ export async function crear(
     operacion: async () => {
       if (await modelo.correoExiste(correo)) {
         throw new ErrorServicio('El correo ya está registrado', 409);
+      }
+
+      // A15 / FR-023: una cuenta con rol `cliente` exige una ficha de
+      // `clientes` con el mismo correo (el validador lo normaliza; la collation
+      // `utf8mb4_unicode_ci` lo hace insensible a mayúsculas). Un cliente sin
+      // correo no puede recibir cuenta y, si el correo ya tiene otra cuenta,
+      // el 409 de unicidad (FR-015) responde antes.
+      if (rol === 'cliente' && !(await modeloCliente.obtenerPorCorreo(correo))) {
+        throw new ErrorServicio(
+          'el correo no coincide con ningún cliente registrado',
+          400
+        );
       }
 
       const hash = await bcrypt.hash(password, RONDAS_HASH);
