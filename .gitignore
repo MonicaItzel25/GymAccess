@@ -37,3 +37,8 @@ Thumbs.db
 # Editores
 .vscode/
 .idea/
+
+# Pesos de modelos faciales: se descargan una vez según frontend/public/modelos/LEEME.md
+# y no se versionan binarios de ~6 MB en el repositorio.
+frontend/public/modelos/*
+!frontend/public/modelos/LEEME.md

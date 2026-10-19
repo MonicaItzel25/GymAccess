@@ -21,7 +21,7 @@ El sistema debe reducir errores de captura, facilitar la consulta de informació
 El producto completo se organizará en tres sprints:
 
 1. **Sprint 1 — Base del sistema, usuarios y clientes:** autenticación, autorización por rol, administración de usuarios y clientes.
-2. **Sprint 2 — Membresías, pagos, reconocimiento facial y accesos:** catálogo y asignación de membresías, pagos, consulta de adeudos, registro facial, validación de acceso, historial de entradas/salidas y auditoría de operaciones relevantes.
+2. **Sprint 2 — Membresías, pagos, reconocimiento facial y accesos:** catálogo y asignación de membresías con precio acordado, pagos con protección de duplicados, consulta de adeudos, registro facial, validación de acceso, autorización manual de ingreso en recepción, historial de intentos de acceso (ingresos; no se registran salidas), auditoría de operaciones relevantes, y pantalla de inicio con estadísticas reales y rediseño de la zona autenticada (ampliación de alcance aprobada).
 3. **Sprint 3 — Entrenadores, rutinas y dashboard administrativo:** gestión de entrenadores, asignación de clientes, creación y consulta de rutinas, objetivos, progreso y dashboard administrativo.
 
 Cada sprint debe construir sobre el trabajo anterior. No se debe volver a implementar una funcionalidad ya terminada sin una razón documentada.
