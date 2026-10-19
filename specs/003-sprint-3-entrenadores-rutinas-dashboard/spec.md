@@ -10,6 +10,16 @@
 
 **Documentos de referencia**: `docs/sprint-3.md` (insumo principal), `docs/project-context.md`, `docs/reglas.md`, `.specify/memory/constitution.md` (v1.0.0), especificaciones y contratos de `specs/001-sprint1-base-auth/` y `specs/002-sprint-2-membresias-pagos-reconocimiento-acceso/`.
 
+## Clarifications
+
+### Session 2026-10-18
+
+- Q: ¿Qué debe ocurrir con las rutinas activas y el historial de progreso de un cliente cuando se finaliza su asignación con el entrenador (o el entrenador queda desactivado)? → A: Las rutinas activas siguen visibles al cliente y el nuevo entrenador asignado puede consultarlas y continuar desde donde quedó.
+- Q: ¿Debe poder el entrenador dar de alta ejercicios nuevos en el catálogo, o solo el administrador crea el catálogo? → A: Solo el administrador crea, modifica y desactiva ejercicios; el entrenador únicamente los consulta y usa.
+- Q: ¿Dentro de qué plazo se considera una membresía «por vencer» en el indicador del dashboard? → A: Próximos 7 días.
+- Q: ¿Debe poder el administrador consultar las rutinas y los progresos individuales de cualquier cliente por supervisión, o solo debe ver los totales agregados del dashboard? → A: Solo ve los totales agregados del dashboard.
+- Q: ¿Puede un cliente tener varias rutinas con estado «activa» al mismo tiempo, o solo una por cliente? → A: Solo una: al activar una rutina nueva, la anterior pasa automáticamente a inactiva y las versiones antiguas se conservan como historial.
+
 ## Escenarios de usuario y pruebas
 
 Cada historia es un recorte independiente y testeable. Las historias US-S3-01 a US-S3-07 provienen de `docs/sprint-3.md`; las historias US-S3-08 y US-S3-09 incorporan las decisiones confirmadas 2 y 3.
@@ -44,7 +54,7 @@ Como administrador o recepcionista, quiero asignar un entrenador a un cliente ac
 1. **Dado** un cliente activo sin entrenador asignado vigente, **Cuando** el administrador (o el recepcionista) le asigna un entrenador activo, **Entonces** la asignación queda registrada con fecha de inicio y estado vigente.
 2. **Dado** un cliente que ya tiene un entrenador asignado vigente, **Cuando** se intenta asignar otro entrenador, **Entonces** el sistema rechaza la operación por tener ya un entrenador principal en el periodo activo.
 3. **Dado** un cliente inexistente o un entrenador inexistente o inactivo, **Cuando** se intenta realizar la asignación, **Entonces** el sistema rechaza la operación sin crear registros.
-4. **Dado** una asignación vigente, **Cuando** el administrador la finaliza, **Entonces** la asignación conserva su historial con fecha de fin y estado final, y el entrenador deja de gestionar ese cliente.
+4. **Dado** una asignación vigente, **Cuando** el administrador la finaliza, **Entonces** la asignación conserva su historial con fecha de fin y estado final, el entrenador deja de gestionar ese cliente y las rutinas activas del cliente permanecen vigentes para que el próximo entrenador asignado pueda retomarlas.
 5. **Dado** un entrenador autenticado, **Cuando** intenta asignarse clientes, **Entonces** el sistema deniega la operación.
 
 ---
@@ -116,7 +126,7 @@ Como cliente, quiero consultar mi rutina asignada y mi historial de progreso des
 1. **Dado** un cliente con una rutina activa, **Cuando** consulta su rutina, **Entonces** ve los ejercicios con series, repeticiones, peso recomendado, descanso e instrucciones.
 2. **Dado** un cliente con objetivos y entradas de progreso, **Cuando** consulta su progreso, **Entonces** ve su evolución histórica ordenada en el tiempo.
 3. **Dado** un cliente sin rutina activa, **Cuando** consulta su rutina, **Entonces** ve un estado vacío comprensible, sin errores.
-4. **Dado** un cliente autenticado, **Cuando** intenta consultar la rutina o el progreso de otro cliente, **Entonces** el sistema deniega la operación sin exponer datos de terceros.
+4. **Dado** un cliente autenticado, **Cuando** intenta consultar la rutina o el progreso de otro cliente, **Entonces** el sistema deniega la operación sin exponer datos de terceros; cualquier parámetro de identificación de cliente recibido (`cliente`, `id_cliente`, `id`) se rechaza con 403.
 
 ---
 
@@ -175,20 +185,22 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 ### Casos límite
 
 - ¿Qué sucede cuando se intenta asignar un entrenador a un cliente que ya tiene uno vigente? → se rechaza la operación y se conserva la asignación existente.
-- ¿Qué sucede cuando se finaliza una asignación y luego se registra una nueva? → el historial conserva ambas; solo la nueva queda vigente.
-- ¿Qué sucede cuando el entrenador asignado es desactivado? → no puede gestionar rutinas ni progresos; sus asignaciones deben reasignarse o finalizarse por administración.
+- ¿Qué sucede cuando se finaliza una asignación y luego se registra una nueva? → el historial conserva ambas; solo la nueva queda vigente, y las rutinas activas del cliente permanecen vigentes para que el nuevo entrenador las retome (Clarifications 2026-10-18).
+- ¿Qué sucede cuando el entrenador asignado es desactivado? → no puede gestionar rutinas ni progresos; sus asignaciones deben reasignarse o finalizarse por administración, y las rutinas activas de sus clientes siguen visibles para el cliente y para el próximo entrenador asignado.
 - ¿Qué sucede cuando el entrenador intenta crear una rutina, objetivo o progreso para un cliente que dejó de estar asignado? → se rechaza la operación.
 - ¿Qué sucede cuando una rutina contiene un ejercicio que luego se desactiva del catálogo? → la rutina conserva el ejercicio y sus parámetros; solo se impide usarlo en rutinas nuevas.
 - ¿Qué sucede cuando un mismo ejercicio del catálogo se usa en varias rutinas? → se reutiliza sin duplicarse; los parámetros (series, repeticiones, etc.) pertenecen a cada rutina.
 - ¿Qué sucede cuando los parámetros de un ejercicio de rutina son inválidos (series o repeticiones en cero, peso o descanso negativos)? → se rechaza la validación con mensaje comprensible.
+- ¿Qué sucede cuando el entrenador activa una rutina para un cliente que ya tenía otra activa? → la rutina anterior pasa a inactiva automáticamente y ambas se conservan en el historial; solo una queda activa por cliente (Clarifications 2026-10-18).
 - ¿Qué sucede cuando un cliente sin membresía vigente tiene rutina? → es válido: el seguimiento deportivo depende de la asignación al cliente, no de la vigencia de la membresía (la vigencia solo condiciona el ingreso físico).
 - ¿Qué sucede cuando un objetivo se cierra o se alcanza? → el objetivo y su historial de progreso permanecen para comparar evolución; no se borran.
 - ¿Qué sucede cuando el dashboard se consulta sin datos en el periodo? → se muestran ceros o estados vacíos, nunca datos ficticios.
 - ¿Qué sucede cuando el filtro del dashboard tiene fechas invertidas o mal formadas? → se rechaza con validación antes de calcular.
+- ¿Puede el administrador abrir una rutina o un progreso individual desde el dashboard? → No: el dashboard solo presenta datos agregados; el detalle de rutinas o progresos individuales no está disponible para su rol (Clarifications 2026-10-18).
 - ¿Qué sucede cuando la auditoría no tiene registros o el filtro no coincide? → estado vacío sin error.
 - ¿Qué sucede cuando un cliente con cuenta intenta consultar datos de entrenamiento de otro cliente? → se deniega en el servidor sin revelar datos de terceros.
 - ¿Qué sucede cuando se desactiva una cuenta de usuario de un entrenador con asignaciones vigentes? → la cuenta no puede operar; las asignaciones quedan pendientes de reasignación o finalización.
-- ¿Qué sucede cuando el entrenador intenta editar una rutina creada por otro entrenador? → se deniega: cada rutina pertenece a quien la creó y a su cliente asignado.
+- ¿Qué sucede cuando el entrenador intenta editar una rutina de un cliente sin asignación vigente con él? → se deniega, incluso si él la creó: toda gestión de rutinas exige asignación vigente con ese cliente; las rutinas creadas por otro entrenador sí pueden consultarse y modificarse cuando el cliente está asignado al que realiza la operación (continuidad tras reasignación, Clarifications 2026-10-18).
 
 ## Requisitos
 
@@ -213,15 +225,15 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 
 - **FR-010**: El sistema DEBE mantener un catálogo independiente de ejercicios reutilizables por múltiples rutinas, con al menos nombre, descripción y estado activo o inactivo.
 - **FR-011**: El administrador DEBE poder crear, modificar y desactivar o reactivar ejercicios del catálogo. Un ejercicio desactivado NO DEBE poder agregarse a rutinas nuevas, y DEBE conservarse en las rutinas existentes y en el historial.
-- **FR-012**: El entrenador DEBE poder consultar el catálogo completo de ejercicios activos y usarlos en sus rutinas; NO DEBE poder modificar ni desactivar ejercicios del catálogo.
+- **FR-012**: El entrenador DEBE poder consultar el catálogo completo de ejercicios activos y usarlos en sus rutinas; NO DEBE poder crear, modificar ni desactivar ejercicios del catálogo.
 - **FR-013**: Crear y modificar ejercicios del catálogo DEBEN quedar registrados en auditoría.
 
 **Rutinas (US-S3-03)**
 
 - **FR-014**: El entrenador DEBE poder crear y modificar rutinas SOLO para clientes con los que tenga una asignación vigente.
-- **FR-015**: Una rutina DEBE asociarse a un cliente válido y al entrenador que la crea, y DEBE conservar nombre, estado y fechas, manteniendo el historial de cambios para comparar versiones en el tiempo.
+- **FR-015**: Una rutina DEBE asociarse a un cliente válido y al entrenador que la crea, y DEBE conservar nombre, estado y fechas, manteniendo el historial de cambios para comparar versiones en el tiempo. Solo puede existir una rutina activa por cliente: al activar una rutina nueva, la anterior pasa a inactiva automáticamente; las rutinas anteriores se conservan sin eliminación física.
 - **FR-016**: Una rutina DEBE poder contener uno o más ejercicios del catálogo, cada uno con series, repeticiones, peso recomendado, descanso e instrucciones; todos esos campos DEBEN validarse (valores numéricos positivos dentro de rangos razonables y texto de instrucciones no vacío cuando se capture).
-- **FR-017**: El entrenador SOLO DEBE poder consultar y modificar rutinas de sus clientes asignados; NO DEBE existir eliminación física de rutinas.
+- **FR-017**: El entrenador SOLO DEBE poder consultar y modificar rutinas de sus clientes asignados vigentemente, incluidas las rutinas creadas por otro entrenador para ese mismo cliente (continuidad del seguimiento tras una reasignación); NO DEBE existir eliminación física de rutinas.
 - **FR-018**: Crear y modificar rutinas DEBEN quedar registrados en auditoría.
 
 **Objetivos y progresos (US-S3-04)**
@@ -238,9 +250,9 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 
 **Dashboard (US-S3-06, decisión confirmada 1)**
 
-- **FR-025**: El sistema DEBE presentar al administrador un dashboard con estadísticas consolidadas basadas exclusivamente en datos reales del sistema, sin datos ficticios, que incluyan como mínimo: clientes totales, clientes activos según vigencia de membresía, clientes nuevos en el periodo; membresías vigentes, por vencer y vencidas; pagos del periodo con cantidad e ingresos y adeudos pendientes; intentos de acceso del periodo con autorizados y rechazados; entrenadores activos y carga de clientes asignados; rutinas activas y clientes sin rutina activa; objetivos activos y registros de progreso del periodo.
+- **FR-025**: El sistema DEBE presentar al administrador un dashboard con estadísticas consolidadas basadas exclusivamente en datos reales del sistema, sin datos ficticios, que incluyan como mínimo: clientes totales, clientes activos según vigencia de membresía, clientes nuevos en el periodo; membresías vigentes, por vencer (con vencimiento en los próximos 7 días) y vencidas; pagos del periodo con cantidad e ingresos y adeudos pendientes; intentos de acceso del periodo con autorizados y rechazados; entrenadores activos y carga de clientes asignados; rutinas activas y clientes sin rutina activa; objetivos activos y registros de progreso del periodo.
 - **FR-026**: El dashboard DEBE permitir filtrar los indicadores por un periodo (fecha de inicio y fin) con un valor por defecto razonable, y DEBE rechazar periodos con la fecha de inicio posterior a la de fin.
-- **FR-027**: Los indicadores DEBEN calcularse con las mismas reglas de negocio del sistema (por ejemplo, la vigencia de membresías se determina por fechas y estado, no solo por el texto de un estado guardado).
+- **FR-027**: Los indicadores DEBEN calcularse con las mismas reglas de negocio del sistema (por ejemplo, la vigencia de membresías se determina por fechas y estado, no solo por el texto de un estado guardado). Solo las membresías con estado `activa` participan de «vigentes» y «por vencer»; «vencidas» agrupa el resto (fecha_fin anterior o estado distinto de `activa`, p. ej. `suspendida` o `cancelada`), de modo que los tres contadores suman el total.
 - **FR-028**: El dashboard estará reservado al administrador; los demás roles NO DEBEN poder acceder a él.
 - **FR-029**: El dashboard NO DEBE duplicar ni alterar el comportamiento de la pantalla de inicio existente; es una vista adicional de consolidación.
 
@@ -286,8 +298,8 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 | Consultar clientes asignados por entrenador y carga | Sí | Sí | Solo sus asignados | No |
 | Crear, modificar y desactivar ejercicios del catálogo | Sí | No | No | No |
 | Consultar el catálogo de ejercicios | Sí | No | Sí | No |
-| Crear y modificar rutinas (clientes asignados) | No | No | Sí (solo las suyas) | No |
-| Consultar rutinas | No | No | Suyas y de sus asignados | La propia |
+| Crear y modificar rutinas (clientes asignados) | No | No | Sí (las de sus clientes asignados, incluidas las creadas por otro entrenador) | No |
+| Consultar rutinas | No | No | De sus clientes asignados (incluidas las creadas por otro entrenador) | La propia |
 | Registrar objetivos y progresos | No | No | Sí (solo sus asignados) | No |
 | Consultar objetivos y progresos | No (solo agregados del dashboard) | No | Suyos y de sus asignados | Los propios |
 | Consultar dashboard administrativo | Sí | No | No | No |
@@ -300,7 +312,7 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 - **Asignación de entrenador a cliente**: relación entre un cliente y un entrenador para un periodo de seguimiento. Atributos: cliente, entrenador, fecha de inicio, fecha de fin y estado. Un cliente puede tener varias asignaciones en el historial, pero como máximo una vigente.
 - **Ejercicio (catálogo)**: elemento deportivo independiente y reutilizable por múltiples rutinas. Atributos: nombre, descripción, grupo muscular u otra clasificación opcional y estado activo o inactivo. No se elimina físicamente.
 - **Ejercicio de una rutina**: aparición concreta de un ejercicio del catálogo dentro de una rutina, con sus parámetros: series, repeticiones, peso recomendado, descanso e instrucciones, y su orden dentro de la rutina.
-- **Rutina**: plan de entrenamiento de un cliente creado por un entrenador. Atributos: cliente, entrenador, nombre, estado y fechas. Conserva historial de cambios; referencia uno o más ejercicios del catálogo.
+- **Rutina**: plan de entrenamiento de un cliente creado por un entrenador. Atributos: cliente, entrenador, nombre, estado y fechas. Conserva historial de cambios; referencia uno o más ejercicios del catálogo. Solo una rutina por cliente puede estar activa a la vez (al activar una nueva, la anterior queda inactiva).
 - **Objetivo de entrenamiento**: meta deportiva de un cliente. Atributos: cliente, meta descrita, unidad cuando aplique, fecha objetivo y estado. Conserva historial.
 - **Progreso del cliente**: entrada periódica de evolución. Atributos: cliente, objetivo cuando exista, fecha, valor o avance medido y comentario opcional. Conserva historial completo.
 - **Entidades reutilizadas sin cambio de alcance**: `usuarios` y `clientes` (Sprint 1); `membresias` (base de los indicadores de vigencia), `pagos` (indicadores de ingresos y adeudos), `accesos` (indicadores de intentos) y `auditoria` (pantalla de solo lectura y registro de las acciones del sprint).
@@ -325,7 +337,7 @@ Como administrador o recepcionista, quiero consultar los clientes asignados a ca
 ## Supuestos
 
 - El «registro de entrenadores» se refiere al perfil de entrenador vinculado a una cuenta existente con rol `entrenador`: la creación de cuentas con rol entrenador ya existe desde el Sprint 1 y no se duplica.
-- Los «roles autorizados» del catálogo de ejercicios se resuelven como: administrador administra (crear, modificar, desactivar o reactivar) y entrenador consulta y usa en rutinas; recepcionista y cliente no participan. Ajustable en `/speckit.clarify` si se requiere que el entrenador pueda dar de alta ejercicios nuevos.
+- Los «roles autorizados» del catálogo de ejercicios se resuelven como: administrador administra (crear, modificar, desactivar o reactivar) y entrenador consulta y usa en rutinas; recepcionista y cliente no participan. Confirmado en `/speckit.clarify` (2026-10-18): el entrenador NO da de alta ejercicios nuevos.
 - El dashboard administrativo es una vista nueva para el administrador; la pantalla de inicio existente del Sprint 2 conserva su comportamiento actual y no se duplica.
 - El filtro de periodo del dashboard usa por defecto el mes en curso.
 - Los objetivos se registran por cliente (no por rutina) y el progreso se asocia al cliente y, cuando exista, a un objetivo concreto.
