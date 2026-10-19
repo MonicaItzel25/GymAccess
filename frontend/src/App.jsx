@@ -13,6 +13,7 @@ import MiPerfil from './pages/MiPerfil';
 import Membresias from './pages/Membresias';
 import RegistrarRostro from './pages/RegistrarRostro';
 import PuntoAcceso from './pages/PuntoAcceso';
+import AutorizarIngreso from './pages/AutorizarIngreso';
 import TiposMembresia from './pages/TiposMembresia';
 import Pagos from './pages/Pagos';
 import MisPagos from './pages/MisPagos';
@@ -35,7 +36,7 @@ function RutaProtegida() {
 }
 
 /** Restringe una ruta a roles concretos de la interfaz.
- *  El backend vuelve a validar siempre (FR-005). */
+ *  El backend vuelve a validar siempre (FR-045). */
 function RutaRol({ roles, children }) {
   const { usuario } = useAuth();
   if (!roles.includes(usuario?.rol)) {
@@ -87,6 +88,15 @@ export default function App() {
           element={
             <RutaRol roles={['administrador', 'recepcionista']}>
               <PuntoAcceso />
+            </RutaRol>
+          }
+        />
+        {/* Autorización manual en recepción (Sprint 2, US-S2-08, FR-030). */}
+        <Route
+          path="/autorizar-ingreso"
+          element={
+            <RutaRol roles={['administrador', 'recepcionista']}>
+              <AutorizarIngreso />
             </RutaRol>
           }
         />

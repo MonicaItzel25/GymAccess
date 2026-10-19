@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 220" role="img" aria-hidden="true" focusable="false">
+  <!-- Ilustración decorativa de gimnasio (US-S2-10, FR-042). Asset propio,
+       servido estáticamente desde frontend/public/img/ sin servicios externos. -->
+  <defs>
+    <linearGradient id="acento" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f05a24"/>
+      <stop offset="1" stop-color="#ff9257"/>
+    </linearGradient>
+    <pattern id="reticula" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#171a23" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="960" height="220" rx="16" fill="#0f1117"/>
+  <rect width="960" height="220" rx="16" fill="url(#reticula)"/>
+
+  <!-- Barra con mancuernas -->
+  <g stroke="url(#acento)" stroke-width="10" stroke-linecap="round">
+    <line x1="240" y1="110" x2="720" y2="110"/>
+  </g>
+  <g fill="#f05a24">
+    <rect x="196" y="66" width="26" height="88" rx="8"/>
+    <rect x="160" y="82" width="22" height="56" rx="7"/>
+    <rect x="738" y="66" width="26" height="88" rx="8"/>
+    <rect x="778" y="82" width="22" height="56" rx="7"/>
+  </g>
+
+  <!-- Línea de ritmo cardíaco -->
+  <path d="M60 170h120l18-30 22 52 20-40 16 18h120"
+        fill="none" stroke="#3e4c59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bloques de fuerza -->
+  <g fill="#171a23">
+    <rect x="838" y="132" width="34" height="56" rx="6"/>
+    <rect x="878" y="108" width="34" height="80" rx="6"/>
+    <rect x="48" y="42" width="60" height="18" rx="9"/>
+  </g>
+  <rect x="878" y="108" width="6" height="80" fill="#f05a24" rx="3"/>
+</svg>

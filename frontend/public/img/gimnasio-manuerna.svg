@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
+  <!-- Marca decorativa: mancuerna (US-S2-10). Asset propio y local. -->
+  <rect width="64" height="64" rx="14" fill="#0f1117"/>
+  <g fill="#f05a24">
+    <rect x="14" y="20" width="8" height="24" rx="3"/>
+    <rect x="42" y="20" width="8" height="24" rx="3"/>
+    <rect x="8" y="26" width="5" height="12" rx="2.5"/>
+    <rect x="51" y="26" width="5" height="12" rx="2.5"/>
+  </g>
+  <rect x="20" y="29" width="24" height="6" rx="3" fill="#ff9257"/>
+</svg>

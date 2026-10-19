@@ -1,5 +1,5 @@
 // pages/MiPerfil.jsx
-// Consulta de la información propia del cliente (rol cliente, FR-015).
+// Consulta de la información propia del cliente (rol cliente, FR-024, spec Sprint 1).
 // Solo lectura: el cliente nunca modifica sus datos desde esta vista.
 // ES Modules (JSX).
 

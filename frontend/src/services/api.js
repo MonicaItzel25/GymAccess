@@ -143,6 +143,12 @@ export const api = {
     return solicitud(`/accesos${consulta ? `?${consulta}` : ''}`);
   },
   misAccesos: () => solicitud('/accesos/mio'),
+  // --- Autorización manual de ingreso (Sprint 2, US-S2-08, FR-030) ---
+  accesoManual: (datos) =>
+    solicitud('/acceso/manual', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
   // --- Información facial (Sprint 2, US-S2-06) ---
   registrarRostro: (idCliente, descriptor) =>
     solicitud(`/clientes/${idCliente}/rostro`, {

@@ -7,8 +7,8 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: #f4f6f8;
-  color: #1f2933;
+  background: #0a0b0e; /* fondo del tema Dark Fitness & Warm Orange (US10, FR-044) */
+  color: #e4e7eb;
 }
 
 h1 {
@@ -17,7 +17,7 @@ h1 {
 }
 
 .subtitulo {
-  color: #616e7c;
+  color: #9aa5b1;
   margin-top: 0;
 }
 
@@ -408,5 +408,313 @@ a:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* --- Rediseño de la zona autenticada (US10, FR-041 a FR-045) ---
+   Shell con menú lateral izquierdo, tema oscuro y acento naranja #f05a24.
+   Todo queda bajo `.app` para no alterar el estilo de la pantalla de login. */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: #0a0b0e;
+  color: #e4e7eb;
+  color-scheme: dark;
+  overflow-x: hidden; /* sin desbordamiento horizontal hasta 768 px (FR-044) */
+}
+
+/* Menú lateral izquierdo (FR-041). */
+.menu-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 250px;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 1.25rem 1rem;
+  background: #0f1117;
+  border-right: 1px solid #232734;
+  overflow-y: auto;
+}
+
+.marca-lateral {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.marca-icono {
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+
+.marca-lateral .marca {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f05a24;
+}
+
+.menu-lateral nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.menu-lateral nav a {
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  color: #cbd2d9;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.menu-lateral nav a:hover {
+  background: #171a23;
+  color: #fff;
+}
+
+.menu-lateral nav a.activo,
+.menu-lateral nav a.activo:hover {
+  background: #f05a24;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sesion-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #232734;
+  font-size: 0.9rem;
+}
+
+.datos-sesion {
+  display: flex;
+  flex-direction: column;
+  color: #e4e7eb;
+}
+
+.datos-sesion small {
+  color: #9aa5b1;
+  text-transform: capitalize;
+}
+
+/* Zona de contenido y barra superior. */
+.zona-principal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.barra-superior {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #0f1117;
+  border-bottom: 1px solid #232734;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.marca-movil {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f05a24;
+}
+
+.alternar-menu {
+  margin-top: 0;
+  padding: 0.45rem 0.85rem;
+  background: #171a23;
+  border: 1px solid #2b3140;
+  color: #f5f7fa;
+}
+
+.alternar-menu:hover {
+  background: #232734;
+}
+
+.app .contenido {
+  width: 100%;
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Componentes comunes en tema oscuro (solo dentro de la zona autenticada). */
+.app .tarjeta {
+  background: #0f1117;
+  border: 1px solid #232734;
+  color: #e4e7eb;
+}
+
+.app h1,
+.app h2,
+.app h3 {
+  color: #f5f7fa;
+}
+
+.app .etiqueta,
+.app label {
+  color: #cbd2d9;
+}
+
+.app input,
+.app select {
+  background: #0a0b0e;
+  border: 1px solid #2b3140;
+  color: #f5f7fa;
+}
+
+.app button {
+  background: #f05a24;
+}
+
+.app button:hover {
+  background: #d94c1c;
+}
+
+.app button:disabled {
+  background: #3e4c59;
+  color: #cbd2d9;
+}
+
+.app button.secundario {
+  background: #232734;
+  border: 1px solid #2b3140;
+  color: #e4e7eb;
+}
+
+.app button.secundario:hover {
+  background: #2b3140;
+}
+
+.app button.peligro {
+  background: #b91c1c;
+}
+
+.app button.peligro:hover {
+  background: #991b1b;
+}
+
+.app .mensaje-error {
+  background: #2a1113;
+  color: #ffb4b4;
+  border: 1px solid #5b1d20;
+}
+
+.app .mensaje-exito {
+  background: #0f2318;
+  color: #a7f3c4;
+  border: 1px solid #1d4a33;
+}
+
+.app .tabla {
+  background: #0f1117;
+  color: #e4e7eb;
+}
+
+.app .tabla th {
+  background: #171a23;
+  color: #9aa5b1;
+  border-bottom: 1px solid #232734;
+}
+
+.app .tabla td {
+  border-bottom: 1px solid #232734;
+}
+
+/* Pantalla de inicio: imagen decorativa local y tarjetas de estadísticas. */
+.decoracion-inicio {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.rejilla-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.estadistica {
+  margin-bottom: 0;
+}
+
+.estadistica h2 {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9aa5b1;
+}
+
+.estadistica .valor {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f05a24;
+}
+
+.estadistica .detalle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #9aa5b1;
+}
+
+/* ≤768 px: el menú lateral se vuelve panel colapsable (FR-041, FR-045). */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .menu-lateral {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    width: min(80vw, 280px);
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .app.menu-abierto .menu-lateral {
+    transform: translateX(0);
+  }
+
+  .barra-superior {
+    display: flex;
+  }
+
+  .capa-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(10, 11, 14, 0.65);
+    cursor: pointer;
+  }
+
+  .app .contenido {
+    padding: 1rem;
   }
 }

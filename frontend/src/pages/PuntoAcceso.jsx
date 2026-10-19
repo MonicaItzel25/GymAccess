@@ -2,7 +2,7 @@
 // Kiosco del punto de acceso (US-S2-07 y US-S2-08). Captura el rostro,
 // envía el descriptor al backend (ruta sin token) y muestra la decisión.
 // Máximo 3 intentos consecutivos; al agotarse muestra el mensaje de
-// "rostro no identificado" (FR-027). ES Modules (JSX).
+// "rostro no identificado" (FR-033). ES Modules (JSX).
 
 import { useCallback, useState } from 'react';
 import { api } from '../services/api';
@@ -39,7 +39,7 @@ export default function PuntoAcceso() {
         return;
       }
 
-      // Solo cuenta como intento fallido el rostro no identificado (FR-027).
+      // Solo cuenta como intento fallido el rostro no identificado (FR-033).
       if (resultado.motivo === 'rostro no identificado') {
         const nuevos = intentos + 1;
         setIntentos(nuevos);

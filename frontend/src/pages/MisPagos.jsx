@@ -1,5 +1,5 @@
 // pages/MisPagos.jsx
-// Pagos y adeudos propios del cliente (US-S2-05, FR-010).
+// Pagos y adeudos propios del cliente (US-S2-05, FR-020).
 // El cliente consulta solo su información; el backend valida el rol.
 // ES Modules (JSX).
 

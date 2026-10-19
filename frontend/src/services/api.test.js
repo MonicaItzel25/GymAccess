@@ -57,7 +57,7 @@ describe('Gestión de sesión local', () => {
       expect(opciones.headers.Authorization).toBeUndefined();
 
       // El backend responde 401 y el error se propaga: la aplicación
-      // vuelve a exigir autenticación (FR-008).
+      // vuelve a exigir autenticación (FR-003, spec Sprint 1).
       expect(error.estado).toBe(401);
       expect(error.message).toBe('no autorizado');
     } finally {

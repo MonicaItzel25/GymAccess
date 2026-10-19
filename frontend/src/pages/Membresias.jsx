@@ -1,7 +1,7 @@
 // pages/Membresias.jsx
 // Asignación, consulta y ciclo de vida de membresías (US-S2-02, US-S2-03).
 // El administrador y el recepcionista asignan y renuevan; suspender, reactivar
-// y cancelar es exclusivo del administrador (FR-026). Acciones sensibles con
+// y cancelar es exclusivo del administrador (FR-012). Acciones sensibles con
 // confirmación previa (constitución XI). ES Modules (JSX).
 
 import { useEffect, useState } from 'react';

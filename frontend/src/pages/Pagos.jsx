@@ -1,7 +1,7 @@
 // pages/Pagos.jsx
 // Registro y consulta de pagos (US-S2-04). El administrador y el
 // recepcionista registran pagos parciales con método del catálogo; el
-// historial se muestra por cliente. No existe eliminación de pagos (FR-008).
+// historial se muestra por cliente. No existe eliminación de pagos (FR-016).
 // ES Modules (JSX).
 
 import { useEffect, useState } from 'react';
@@ -221,7 +221,7 @@ export default function Pagos() {
         <section className="tarjeta">
           <h1>Adeudos por membresía</h1>
           <p className="etiqueta">
-            Adeudo = precio del tipo de membresía − suma de pagos registrados (FR-009).
+            Adeudo = precio acordado de la membresía − suma de pagos registrados (FR-018).
           </p>
           <table className="tabla">
             <thead>

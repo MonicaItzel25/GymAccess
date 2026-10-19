@@ -1,7 +1,7 @@
 // pages/Accesos.jsx
 // Historial de intentos de acceso para administrador, recepcionista y
-// entrenador (US-S2-09, FR-019). Muestra fecha, hora, resultado y motivo de
-// rechazo, con filtros de fecha y cliente. No existe eliminación (FR-018).
+// entrenador (US-S2-09, FR-035). Muestra fecha, hora, resultado y motivo de
+// rechazo, con filtros de fecha y cliente. No existe eliminación (FR-034).
 // ES Modules (JSX).
 
 import { useEffect, useState } from 'react';
@@ -93,12 +93,14 @@ export default function Accesos() {
             <th>Cliente</th>
             <th>Resultado</th>
             <th>Motivo</th>
+            <th>Origen</th>
+            <th>Responsable</th>
           </tr>
         </thead>
         <tbody>
           {accesos.length === 0 && (
             <tr>
-              <td colSpan={5}>No hay intentos de acceso registrados.</td>
+              <td colSpan={7}>No hay intentos de acceso registrados.</td>
             </tr>
           )}
           {accesos.map((a) => (
@@ -108,6 +110,8 @@ export default function Accesos() {
               <td>{a.cliente_nombre ? `${a.cliente_nombre} ${a.cliente_apellido}` : '—'}</td>
               <td>{a.resultado}</td>
               <td>{a.motivo_rechazo || '—'}</td>
+              <td>{a.origen === 'manual' ? 'manual' : 'kiosco'}</td>
+              <td>{a.usuario_nombre || '—'}</td>
             </tr>
           ))}
         </tbody>

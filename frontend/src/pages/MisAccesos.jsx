@@ -1,5 +1,5 @@
 // pages/MisAccesos.jsx
-// Historial de accesos propios del cliente (US-S2-09, FR-010).
+// Historial de accesos propios del cliente (US-S2-09, FR-036).
 // El cliente solo ve sus propios intentos; el backend valida el rol.
 // ES Modules (JSX).
 
@@ -28,12 +28,13 @@ export default function MisAccesos() {
             <th>Hora</th>
             <th>Resultado</th>
             <th>Motivo</th>
+            <th>Origen</th>
           </tr>
         </thead>
         <tbody>
           {accesos.length === 0 && (
             <tr>
-              <td colSpan={4}>No tienes intentos de acceso registrados.</td>
+              <td colSpan={5}>No tienes intentos de acceso registrados.</td>
             </tr>
           )}
           {accesos.map((a) => (
@@ -42,6 +43,7 @@ export default function MisAccesos() {
               <td>{a.hora}</td>
               <td>{a.resultado}</td>
               <td>{a.motivo_rechazo || '—'}</td>
+              <td>{a.origen === 'manual' ? 'manual' : 'kiosco'}</td>
             </tr>
           ))}
         </tbody>
