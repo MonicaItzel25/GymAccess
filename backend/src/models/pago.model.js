@@ -1,12 +1,12 @@
 // models/pago.model.js
 // Acceso a datos de la tabla `pagos`. Consultas parametrizadas.
-// Sin operaciones de eliminación ordinaria (FR-008). ES Modules.
+// Sin operaciones de eliminación ordinaria (FR-016, SC-005). ES Modules.
 
 import { consultar, ejecutar } from '../config/db.js';
 
 const COLUMNAS = `
   p.id_pago, p.id_cliente, p.id_membresia, p.monto, p.fecha_pago,
-  p.metodo_pago, p.estado,
+  p.metodo_pago, p.estado, p.id_operacion,
   c.nombre AS cliente_nombre, c.apellido AS cliente_apellido
 `;
 
@@ -15,12 +15,12 @@ const JOINS = `
   JOIN clientes c ON c.id_cliente = p.id_cliente
 `;
 
-/** Inserta un pago y devuelve su identificador. */
-export async function crear({ idCliente, idMembresia, monto, metodoPago }) {
+/** Inserta un pago (con id_operacion opcional) y devuelve su identificador. */
+export async function crear({ idCliente, idMembresia, monto, metodoPago, idOperacion = null }) {
   const resultado = await ejecutar(
-    `INSERT INTO pagos (id_cliente, id_membresia, monto, metodo_pago, estado)
-     VALUES (?, ?, ?, ?, 'pagado')`,
-    [idCliente, idMembresia, monto, metodoPago]
+    `INSERT INTO pagos (id_cliente, id_membresia, monto, metodo_pago, estado, id_operacion)
+     VALUES (?, ?, ?, ?, 'pagado', ?)`,
+    [idCliente, idMembresia, monto, metodoPago, idOperacion]
   );
   return resultado.insertId;
 }
@@ -42,11 +42,23 @@ export async function obtenerPorId(id) {
   return filas[0] || null;
 }
 
-/** Suma los pagos de una membresía (para el cálculo de adeudo, FR-009). */
+/** Suma los pagos PAGADOS de una membresía (para el cálculo de adeudo, FR-018,
+ *  RN-006). Solo cuenta los pagos con estado 'pagado': los cancelados o
+ *  pendientes no reducen el adeudo. */
 export async function sumarPagosPorMembresia(idMembresia) {
   const filas = await consultar(
-    'SELECT COALESCE(SUM(monto), 0) AS total FROM pagos WHERE id_membresia = ?',
+    "SELECT COALESCE(SUM(monto), 0) AS total FROM pagos WHERE id_membresia = ? AND estado = 'pagado'",
     [idMembresia]
   );
   return Number(filas[0].total);
+}
+
+/** Devuelve true si ya existe un pago del cliente con esa operación (FR-017).
+ *  El índice único uq_pagos_cliente_operacion respalda esta comprobación. */
+export async function existeOperacion(idCliente, idOperacion) {
+  const filas = await consultar(
+    'SELECT 1 FROM pagos WHERE id_cliente = ? AND id_operacion = ? LIMIT 1',
+    [idCliente, idOperacion]
+  );
+  return filas.length > 0;
 }

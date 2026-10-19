@@ -1,5 +1,5 @@
 // routes/tipoMembresia.routes.js
-// Rutas de tipos de membresía. Escritura: solo administrador (FR-001).
+// Rutas de tipos de membresía. Escritura: solo administrador (FR-004).
 // Consulta: administrador y recepcionista. ES Modules.
 
 import { Router } from 'express';

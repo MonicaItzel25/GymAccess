@@ -1,5 +1,5 @@
 // routes/usuario.routes.js
-// Rutas de gestión de usuarios: solo el administrador (FR-006).
+// Rutas de gestión de usuarios: solo el administrador (FR-011, spec Sprint 1).
 // ES Modules.
 
 import { Router } from 'express';

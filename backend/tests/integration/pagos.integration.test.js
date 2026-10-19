@@ -39,8 +39,8 @@ describe('Integración de registro de pagos', () => {
       ['Mensual pago', '30 días', 30, 500]
     );
     const [rMem] = await pool.execute(
-      "INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, 'activa')",
-      [idCliente, rTipo.insertId, '2026-01-01', '2030-12-31']
+      "INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado, precio_acordado) VALUES (?, ?, ?, ?, 'activa', ?)",
+      [idCliente, rTipo.insertId, '2026-01-01', '2030-12-31', 500]
     );
     idMembresia = rMem.insertId;
   });

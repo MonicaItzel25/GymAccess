@@ -1,5 +1,5 @@
 // validators/tipoMembresia.validators.js
-// Reglas de validación de tipos de membresía (FR-001, contracts/api.md §1):
+// Reglas de validación de tipos de membresía (FR-001, FR-002, data-model.md):
 //   nombre: requerido, 2–100 caracteres
 //   duracion: requerida, entero positivo (días)
 //   precio: requerido, número positivo con hasta 2 decimales

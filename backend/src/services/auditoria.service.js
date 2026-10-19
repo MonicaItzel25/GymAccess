@@ -1,5 +1,5 @@
 // services/auditoria.service.js
-// Registro de acciones de auditoría (FR-021). Un fallo al auditar NUNCA debe
+// Registro de acciones de auditoría (FR-037, FR-040). Un fallo al auditar NUNCA debe
 // interrumpir la operación principal: se registra en el log del servidor y se
 // continúa. ES Modules.
 

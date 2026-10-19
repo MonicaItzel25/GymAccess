@@ -1,5 +1,5 @@
 // validators/rostro.validators.js
-// Reglas de validación de la información facial (FR-011, FR-013):
+// Reglas de validación de la información facial (FR-021, FR-022):
 //   descriptor_facial: requerido, arreglo de exactamente 128 números.
 // ES Modules.
 

@@ -13,7 +13,7 @@ import { ErrorServicio } from '../utils/errorServicio.js';
 const RONDAS_HASH = 10;
 
 /**
- * Ejecuta la operación y registra la acción en `auditoria` (A11, FR-021,
+ * Ejecuta la operación y registra la acción en `auditoria` (A11, FR-037, FR-040,
  * constitución X.1): `exitoso` al completarse, `rechazado` ante un
  * ErrorServicio de negocio y `error` ante un fallo inesperado. La descripción
  * NUNCA incluye contraseñas ni hashes (regla X.3). `registrarAccion` nunca
@@ -73,11 +73,11 @@ export async function crear(
         throw new ErrorServicio('El correo ya está registrado', 409);
       }
 
-      // A15 / FR-023: una cuenta con rol `cliente` exige una ficha de
+      // A15 / FR-023 (spec Sprint 1): una cuenta con rol `cliente` exige una ficha de
       // `clientes` con el mismo correo (el validador lo normaliza; la collation
       // `utf8mb4_unicode_ci` lo hace insensible a mayúsculas). Un cliente sin
       // correo no puede recibir cuenta y, si el correo ya tiene otra cuenta,
-      // el 409 de unicidad (FR-015) responde antes.
+      // el 409 de unicidad (FR-015, spec Sprint 1) responde antes.
       if (rol === 'cliente' && !(await modeloCliente.obtenerPorCorreo(correo))) {
         throw new ErrorServicio(
           'el correo no coincide con ningún cliente registrado',
@@ -120,7 +120,7 @@ export async function modificar(id, campos, idUsuario = null) {
       if (campos.correo !== undefined) aActualizar.correo = campos.correo;
       // `rol` y `estado` se modifican SOLO por cambiarRol/cambiarEstado, que es
       // el despacho del contrato (api.md) y quien aplica la protección del
-      // último administrador activo (FR-014 / regla R4). Aquí se ignoran a
+      // último administrador activo (regla R4 / FR-014, spec Sprint 1). Aquí se ignoran a
       // propósito: un cuerpo mixto (p. ej. `{ nombre, rol }`) no debe eludir
       // esa guarda.
       if (campos.password !== undefined) {
@@ -135,8 +135,8 @@ export async function modificar(id, campos, idUsuario = null) {
 
 /**
  * Aplica un cambio de `rol` o `estado` dentro de una transacción con
- * `SELECT ... FOR UPDATE` que cuenta los administradores activos (FR-014,
- * SC-002, A10): si la operación dejaría el sistema sin administradores
+ * `SELECT ... FOR UPDATE` que cuenta los administradores activos (FR-014, spec Sprint 1,
+ * A10): si la operación dejaría el sistema sin administradores
  * activos, se revierte la transacción y se lanza 409 con el mensaje del
  * contrato. El bloqueo serializa verificaciones concurrentes.
  */
@@ -177,8 +177,8 @@ async function aplicarCambioBloqueado(id, campos) {
   }
 }
 
-/** Asigna un rol del catálogo a un usuario (FR-007). La degradación pasa por
- *  la transacción con la guarda del último administrador activo (FR-014). */
+/** Asigna un rol del catálogo a un usuario (FR-012, spec Sprint 1). La degradación pasa por
+ *  la transacción con la guarda del último administrador activo (FR-014, spec Sprint 1). */
 export async function cambiarRol(id, rol, idUsuario = null) {
   return conAuditoria({
     idUsuario,
@@ -199,9 +199,9 @@ export async function cambiarRol(id, rol, idUsuario = null) {
   });
 }
 
-/** Activa o desactiva una cuenta; la baja es lógica, sin eliminación (FR-008).
+/** Activa o desactiva una cuenta; la baja es lógica, sin eliminación (FR-013, spec Sprint 1).
  *  La desactivación pasa por la transacción con la guarda del último
- *  administrador activo (FR-014). */
+ *  administrador activo (FR-014, spec Sprint 1). */
 export async function cambiarEstado(id, estado, idUsuario = null) {
   return conAuditoria({
     idUsuario,

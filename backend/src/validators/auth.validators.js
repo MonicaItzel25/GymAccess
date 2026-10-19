@@ -1,5 +1,5 @@
 // validators/auth.validators.js
-// Reglas de validación del inicio de sesión (FR-013). ES Modules.
+// Reglas de validación del inicio de sesión (FR-001, spec Sprint 1). ES Modules.
 
 import { body } from 'express-validator';
 

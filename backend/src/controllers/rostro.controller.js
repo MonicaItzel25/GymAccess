@@ -1,7 +1,7 @@
 // controllers/rostro.controller.js
 // Endpoints de información facial. Escritura y consulta: administrador y
 // recepcionista. El entrenador y el cliente reciben 403. El descriptor facial
-// nunca se devuelve (FR-020). ES Modules.
+// nunca se devuelve (FR-024). ES Modules.
 
 import * as servicio from '../services/rostro.service.js';
 import { enviarOk, envolverControlador } from '../utils/response.js';

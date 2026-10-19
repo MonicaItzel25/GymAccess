@@ -13,6 +13,17 @@ export const intentar = envolverControlador(async (req, res) => {
   return enviarOk(res, decision, 200);
 });
 
+/** POST /api/acceso/manual (administrador o recepcionista, FR-030).
+ *  El backend valida y decide; responde 201 al registrar. */
+export const autorizarManual = envolverControlador(async (req, res) => {
+  const { id_cliente, resultado, motivo } = req.body;
+  const registro = await servicio.autorizarAccesoManual(
+    { idCliente: Number(id_cliente), resultado, motivo: motivo ?? null },
+    req.usuario.id_usuario
+  );
+  return enviarOk(res, registro, 201);
+});
+
 /** GET /api/accesos (administrador, recepcionista, entrenador). */
 export const listar = envolverControlador(async (req, res) => {
   const { desde, hasta, cliente } = req.query;
@@ -24,7 +35,7 @@ export const listar = envolverControlador(async (req, res) => {
   return enviarOk(res, accesos);
 });
 
-/** GET /api/accesos/mio (solo cliente, FR-010). */
+/** GET /api/accesos/mio (solo cliente, FR-036). */
 export const mio = envolverControlador(async (req, res) => {
   // Localiza al cliente por coincidencia de correo (patrón heredado).
   const { obtenerPorCorreo } = await import('../models/cliente.model.js');

@@ -1,5 +1,5 @@
 // validators/membresia.validators.js
-// Reglas de validación de membresías (FR-003, FR-004):
+// Reglas de validación de membresías (FR-006, FR-007):
 //   id_cliente e id_tipo_membresia: requeridos, enteros positivos
 //   fecha_inicio: opcional, con formato de fecha
 // ES Modules.
@@ -22,6 +22,13 @@ export const reglasCrearMembresia = [
     .isISO8601()
     .withMessage('La fecha de inicio no tiene un formato válido')
     .toDate(),
+  // El precio lo decide el servidor (principio II): se rechaza si el cliente lo envía.
+  body('precio_acordado')
+    .optional()
+    .bail()
+    .custom(() => {
+      throw new Error('El precio_acordado lo determina el servidor y no puede enviarse en la petición');
+    }),
 ];
 
 export const reglasRenovarMembresia = [
@@ -35,6 +42,12 @@ export const reglasRenovarMembresia = [
     .isISO8601()
     .withMessage('La fecha de inicio no tiene un formato válido')
     .toDate(),
+  body('precio_acordado')
+    .optional()
+    .bail()
+    .custom(() => {
+      throw new Error('El precio_acordado lo determina el servidor y no puede enviarse en la petición');
+    }),
 ];
 
 export const reglasIdMembresia = [

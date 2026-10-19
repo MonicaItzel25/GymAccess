@@ -1,7 +1,7 @@
 // services/tipoMembresia.service.js
 // Lógica de negocio de los tipos de membresía (FR-001): nombre, duración > 0
 // y precio > 0. Solo el administrador crea o modifica; el recepcionista
-// consulta. Todas las acciones quedan registradas en auditoría (FR-021).
+// consulta. Todas las acciones quedan registradas en auditoría (FR-037).
 // ES Modules.
 
 import * as modelo from '../models/tipoMembresia.model.js';
@@ -22,7 +22,7 @@ export async function obtener(id) {
   return tipo;
 }
 
-/** Crea un tipo con duración y precio positivos (FR-001). */
+/** Crea un tipo con duración y precio positivos (FR-001, FR-002). */
 export async function crear({ nombre, descripcion, duracion, precio, estado = 'activo' }, idUsuario = null) {
   const nombreLimpio = (nombre || '').trim();
   if (!nombreLimpio) {

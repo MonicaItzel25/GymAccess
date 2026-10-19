@@ -1,7 +1,7 @@
 // services/rostro.service.js
 // Lógica de negocio de la información facial: registro y consulta de
-// metadatos, con las reglas de protección de datos biométricos (FR-011,
-// FR-020). El descriptor NUNCA sale de aquí hacia la API. ES Modules.
+// metadatos, con las reglas de protección de datos biométricos (FR-021,
+// FR-024). El descriptor NUNCA sale de aquí hacia la API. ES Modules.
 
 import * as modelo from '../models/rostro.model.js';
 import * as clienteModelo from '../models/cliente.model.js';
@@ -9,10 +9,10 @@ import * as auditoria from './auditoria.service.js';
 import { ErrorServicio } from '../utils/errorServicio.js';
 import { distancia, obtenerUmbral } from '../utils/matchRostro.js';
 
-/** Registra o actualiza el descriptor facial de un cliente existente (FR-011).
- *  Devuelve solo metadatos; nunca el descriptor (FR-020). */
+/** Registra o actualiza el descriptor facial de un cliente existente (FR-021, FR-023).
+ *  Devuelve solo metadatos; nunca el descriptor (FR-024). */
 export async function registrarRostro(idCliente, descriptor, idUsuario = null) {
-  // El cliente debe existir antes de asociar información facial (FR-011).
+  // El cliente debe existir antes de asociar información facial (FR-021).
   const cliente = await clienteModelo.obtenerPorId(idCliente);
   if (!cliente) {
     throw new ErrorServicio('Cliente no encontrado', 404);
@@ -46,7 +46,7 @@ export async function obtenerEstadoRostro(idCliente) {
 }
 
 /** Compara un descriptor contra los descriptores activos registrados y
- *  devuelve el cliente identificado, o null si ninguno coincide (FR-014).
+ *  devuelve el cliente identificado, o null si ninguno coincide (FR-027).
  *  Uso interno del backend; la comparación se hace en memoria (research §2).
  *  Permite inyectar `comparar` y `umbral` para las pruebas. */
 export async function identificarCliente(descriptor, { comparar = distancia, umbral = obtenerUmbral() } = {}) {

@@ -82,7 +82,7 @@ export async function correoExisteEnOtro(correo, idExcluir) {
 }
 
 /** Devuelve el usuario con bloqueo FOR UPDATE dentro de una transacción
- *  (FR-014): congela la fila mientras se verifica el último administrador. */
+ *  (FR-014, spec Sprint 1): congela la fila mientras se verifica el último administrador. */
 export async function obtenerConBloqueo(id, conexion) {
   const [filas] = await conexion.query(
     `SELECT id_usuario, nombre, rol, estado
@@ -94,7 +94,7 @@ export async function obtenerConBloqueo(id, conexion) {
   return filas[0] || null;
 }
 
-/** Cuenta los administradores activos con bloqueo FOR UPDATE (FR-014): el
+/** Cuenta los administradores activos con bloqueo FOR UPDATE (FR-014, spec Sprint 1): el
  *  bloqueo serializa verificaciones concurrentes del último administrador. */
 export async function contarAdministradoresActivos(conexion) {
   const [filas] = await conexion.query(

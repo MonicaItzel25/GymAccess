@@ -43,7 +43,7 @@ export function crearApp() {
   app.use('/api/acceso', accesoRoutes);
   // Consulta de registros de acceso (Sprint 2, US-S2-09).
   app.use('/api/accesos', accesoConsultaRoutes);
-  // Auditoría (Sprint 2, FR-021): solo administrador.
+  // Auditoría (Sprint 2, FR-038): solo administrador.
   app.use('/api/auditoria', auditoriaRoutes);
 
   // Respuesta para rutas desconocidas (antes del manejador de errores).

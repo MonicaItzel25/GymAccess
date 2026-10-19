@@ -24,8 +24,9 @@ export const crear = envolverControlador(async (req, res) => {
 });
 
 /** PUT /api/usuarios/:id — despacha a la operación concreta según los campos.
- *  `rol` y `estado` solo pasan por cambiarRol/cambiarEstado (protección
- *  FR-014 del último administrador); el resto va a modificación general. */
+ *  `rol` y `estado` solo pasan por cambiarRol/cambiarEstado (la guarda de
+ *  FR-014, spec Sprint 1, protege al último administrador); el resto va a la
+ *  modificación general. */
 export const modificar = envolverControlador(async (req, res) => {
   const id = Number(req.params.id);
   const campos = req.body || {};

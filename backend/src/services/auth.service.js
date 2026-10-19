@@ -1,7 +1,7 @@
 // services/auth.service.js
 // Lógica de autenticación: verificación con bcrypt, emisión de JWT con
 // expiración de 8 horas y bloqueo de cuentas tras 5 intentos fallidos
-// consecutivos durante 15 minutos (FR-030). ES Modules.
+// consecutivos durante 15 minutos (FR-004, spec Sprint 1). ES Modules.
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';

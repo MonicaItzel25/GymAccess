@@ -20,7 +20,7 @@ router.use(autenticar);
 // Escritura (US-S2-02): administrador o recepcionista
 router.post('/', autorizar('administrador', 'recepcionista'), reglasCrearMembresia, validar, asignar);
 
-// Ciclo de vida (US-S2-03): renovar admin/recep; suspender/reactivar/cancelar solo admin (FR-026)
+// Ciclo de vida (US-S2-03): renovar admin/recep; suspender/reactivar/cancelar solo admin (FR-011, FR-012)
 router.put('/:id/renovar', autorizar('administrador', 'recepcionista'), reglasIdMembresia, validar, renovar);
 router.put('/:id/suspender', autorizar('administrador'), reglasIdMembresia, validar, suspender);
 router.put('/:id/reactivar', autorizar('administrador'), reglasIdMembresia, validar, reactivar);

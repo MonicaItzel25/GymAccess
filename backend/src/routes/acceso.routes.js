@@ -8,7 +8,10 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { validar } from '../validators/validar.js';
-import { intentar } from '../controllers/acceso.controller.js';
+import { autenticar } from '../middlewares/auth.js';
+import { autorizar } from '../middlewares/authorize.js';
+import { intentar, autorizarManual } from '../controllers/acceso.controller.js';
+import { reglasAccesoManual } from '../validators/accesoManual.validators.js';
 
 const router = Router();
 
@@ -26,5 +29,16 @@ const reglasDescriptor = [
 
 // Ruta del kiosco: SIN autenticar (única excepción del sistema).
 router.post('/intento', reglasDescriptor, validar, intentar);
+
+// Autorización manual en recepción (FR-030, RN-017): requiere sesión y rol
+// administrador o recepcionista. El kiosco de arriba no se modifica.
+router.post(
+  '/manual',
+  autenticar,
+  autorizar('administrador', 'recepcionista'),
+  reglasAccesoManual,
+  validar,
+  autorizarManual
+);
 
 export default router;

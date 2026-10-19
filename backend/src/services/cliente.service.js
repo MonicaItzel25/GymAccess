@@ -7,7 +7,7 @@ import * as auditoria from './auditoria.service.js';
 import { ErrorServicio } from '../utils/errorServicio.js';
 
 /**
- * Ejecuta la operación y registra la acción en `auditoria` (A11, FR-021,
+ * Ejecuta la operación y registra la acción en `auditoria` (A11, FR-037, FR-040,
  * constitución X.1): `exitoso`, `rechazado` (ErrorServicio) o `error`
  * (fallo inesperado). La descripción NUNCA incluye credenciales (X.3).
  * `registrarAccion` nunca lanza: un fallo al auditar no interrumpe la
@@ -45,7 +45,7 @@ export async function listar({ buscar = '', basicos = false } = {}) {
 }
 
 /** Devuelve un cliente por identificador o lanza 404.
- *  Con `basico: true` solo devuelve los campos del rol entrenador (FR-011). */
+ *  Con `basico: true` solo devuelve los campos del rol entrenador (FR-017, spec Sprint 1). */
 export async function obtener(id, { basico = false } = {}) {
   const cliente = await modelo.obtenerPorId(id);
   if (!cliente) {
@@ -58,7 +58,7 @@ export async function obtener(id, { basico = false } = {}) {
   return cliente;
 }
 
-/** Registra un cliente; el correo no puede duplicarse (FR-014).
+/** Registra un cliente; el correo no puede duplicarse (FR-020, spec Sprint 1).
  *  Audita creación, rechazos y fallos con el actor indicado (A11). */
 export async function crear(
   { nombre, apellido, correo, telefono, direccion, estado = 'activo' },
@@ -88,12 +88,12 @@ export async function crear(
   });
 }
 
-/** Indica si un correo ya pertenece a otro cliente (unicidad, FR-014). */
+/** Indica si un correo ya pertenece a otro cliente (unicidad, FR-020, spec Sprint 1). */
 export async function existeCorreoDeOtroCliente(correo, idCliente) {
   return modelo.correoExisteEnOtro(correo, idCliente);
 }
 
-/** Actualiza un cliente; valida unicidad de correo y existencia (FR-010).
+/** Actualiza un cliente; valida unicidad de correo y existencia (FR-019, FR-020, spec Sprint 1).
  *  Audita la modificación con el actor indicado (A11). */
 export async function actualizar(id, campos, idUsuario = null) {
   const camposModificados = Object.keys(campos).filter((c) =>

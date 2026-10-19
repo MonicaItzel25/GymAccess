@@ -1,5 +1,5 @@
 // validators/pago.validators.js
-// Reglas de validación de pagos (FR-007, contracts/api.md §3):
+// Reglas de validación de pagos (FR-015, contracts/api-sprint2.md §1.2):
 //   id_cliente, id_membresia: requeridos, enteros positivos
 //   monto: requerido, numérico > 0
 //   metodo_pago: requerido, presente en el catálogo
@@ -29,4 +29,10 @@ export const reglasCrearPago = [
     .withMessage('El método de pago es obligatorio')
     .isIn(METODOS_PAGO)
     .withMessage(`El método de pago debe ser uno de: ${METODOS_PAGO.join(', ')}`),
+  body('id_operacion')
+    .optional({ nullable: true })
+    .isString()
+    .withMessage('El id_operacion debe ser una cadena')
+    .isLength({ max: 100 })
+    .withMessage('El id_operacion no puede exceder 100 caracteres'),
 ];

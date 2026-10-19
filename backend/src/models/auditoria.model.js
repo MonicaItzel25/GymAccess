@@ -1,5 +1,5 @@
 // models/auditoria.model.js
-// Acceso a datos de la tabla `auditoria` (FR-021). Consultas parametrizadas.
+// Acceso a datos de la tabla `auditoria` (FR-037). Consultas parametrizadas.
 // id_usuario puede ser nulo para acciones del sistema (kiosco sin sesión).
 // ES Modules.
 

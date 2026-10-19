@@ -1,7 +1,7 @@
 // controllers/auditoria.controller.js
-// Endpoint de consulta de auditoría (FR-021). Solo administrador.
+// Endpoint de consulta de auditoría (FR-038). Solo administrador.
 // Filtros: ?desde=, ?hasta= (fecha o fecha y hora) y ?modulo=.
-// No existe endpoint de eliminación (FR-008). ES Modules.
+// No existe endpoint de eliminación (FR-038). ES Modules.
 
 import * as servicio from '../services/auditoria.service.js';
 import * as modelo from '../models/auditoria.model.js';

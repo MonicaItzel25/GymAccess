@@ -45,8 +45,8 @@ async function prepararTipoYRostro(idCliente, descriptor) {
 /** Asigna una membresía con estado y fechas controlados. */
 async function asignarMembresia(idCliente, idTipo, { fechaInicio, fechaFin, estado }) {
   const [r] = await obtenerPool().execute(
-    'INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?)',
-    [idCliente, idTipo, fechaInicio, fechaFin, estado]
+    'INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado, precio_acordado) VALUES (?, ?, ?, ?, ?, ?)',
+    [idCliente, idTipo, fechaInicio, fechaFin, estado, 500]
   );
   return r.insertId;
 }

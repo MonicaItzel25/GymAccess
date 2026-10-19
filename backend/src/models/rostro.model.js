@@ -1,7 +1,7 @@
 // models/rostro.model.js
 // Acceso a datos de la tabla `rostros`. Consultas parametrizadas.
 // El descriptor facial NUNCA se devuelve en las respuestas de la API
-// (FR-020): este modelo solo lo expone a los servicios internos para la
+// (FR-024): este modelo solo lo expone a los servicios internos para la
 // comparación. ES Modules.
 
 import { consultar, ejecutar } from '../config/db.js';

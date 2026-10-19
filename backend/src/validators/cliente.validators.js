@@ -1,5 +1,5 @@
 // validators/cliente.validators.js
-// Reglas de validación de clientes (data-model.md / FR-013, FR-014):
+// Reglas de validación de clientes (data-model.md / FR-019, FR-020, spec Sprint 1):
 //   nombre y apellido: requeridos, 2–100 caracteres
 //   correo: opcional, formato válido y único si existe
 //   telefono: opcional, hasta 20 caracteres

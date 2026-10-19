@@ -1,5 +1,5 @@
 // controllers/adeudo.controller.js
-// Endpoints de consulta de adeudos (FR-009, FR-010).
+// Endpoints de consulta de adeudos (FR-019, FR-020).
 // GET /api/adeudos: solo administrador. GET /api/adeudos/mio: solo cliente.
 // ES Modules.
 

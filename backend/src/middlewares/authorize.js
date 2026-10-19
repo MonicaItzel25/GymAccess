@@ -1,5 +1,5 @@
 // middlewares/authorize.js
-// Autorización por rol en el backend (FR-005, RN-13).
+// Autorización por rol en el backend (FR-045, RN-001).
 // Ocultar una opción en la interfaz NO es autorización: este middleware es
 // la única fuente de verdad de permisos. ES Modules.
 

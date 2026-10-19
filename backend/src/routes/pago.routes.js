@@ -1,7 +1,7 @@
 // routes/pago.routes.js
 // Rutas de pagos. Escritura y consulta: administrador y recepcionista.
 // Información propia: solo rol cliente (registrada antes de las rutas /:id).
-// No existe ninguna ruta DELETE (FR-008, SC-005). ES Modules.
+// No existe ninguna ruta DELETE (FR-016, SC-005). ES Modules.
 
 import { Router } from 'express';
 import { autenticar } from '../middlewares/auth.js';

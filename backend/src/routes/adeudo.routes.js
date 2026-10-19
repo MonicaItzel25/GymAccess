@@ -1,5 +1,5 @@
 // routes/adeudo.routes.js
-// Rutas de consulta de adeudos (FR-009, FR-010).
+// Rutas de consulta de adeudos (FR-019, FR-020).
 // GET /: solo administrador (consulta global, US-S2-05.3).
 // GET /mio: solo cliente — se registra antes de la ruta genérica.
 // ES Modules.

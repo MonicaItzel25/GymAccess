@@ -1,8 +1,8 @@
 // services/pago.service.js
-// Lógica de negocio de los pagos (FR-007, FR-008): pagos parciales, monto > 0
+// Lógica de negocio de los pagos (FR-014, FR-015): pagos parciales, monto > 0
 // y método del catálogo. La membresía debe existir y ser coherente con el
 // cliente. No hay eliminación de pagos. Toda acción queda en auditoría
-// (FR-021). ES Modules.
+// (FR-037). ES Modules.
 
 import * as modelo from '../models/pago.model.js';
 import * as membresiaModelo from '../models/membresia.model.js';
@@ -15,15 +15,17 @@ export async function listar({ idCliente = null } = {}) {
   return modelo.listar(idCliente);
 }
 
-/** Calcula el adeudo de una membresía: precio del tipo − SUMA(pagos) (FR-009).
- *  Nunca devuelve negativo: si se pagó de más, el adeudo es 0. */
+/** Calcula el adeudo de una membresía: precio acordado − SUMA(pagos pagados)
+ *  (FR-018, RN-006). Usa `precio_acordado` (capturado al asignar/renovar), no el
+ *  precio vigente del catálogo: cambiar el catálogo no altera membresías ya
+ *  emitidas (FR-005). Nunca devuelve negativo. */
 export async function calcularAdeudo(idMembresia) {
   const membresia = await membresiaModelo.obtenerPorId(idMembresia);
   if (!membresia) {
     throw new ErrorServicio('Membresía no encontrada', 404);
   }
   const totalPagado = await modelo.sumarPagosPorMembresia(idMembresia);
-  const precio = Number(membresia.precio);
+  const precio = Number(membresia.precio_acordado);
   const adeudo = Math.max(0, precio - totalPagado);
   return {
     id_membresia: membresia.id_membresia,
@@ -37,13 +39,13 @@ export async function calcularAdeudo(idMembresia) {
   };
 }
 
-/** Devuelve el adeudo de todas las membresías (consulta del administrador, FR-009). */
+/** Devuelve el adeudo de todas las membresías (consulta del administrador, FR-019). */
 export async function listarAdeudos() {
   const membresias = await membresiaModelo.listar(null);
   const resultados = [];
   for (const m of membresias) {
     const totalPagado = await modelo.sumarPagosPorMembresia(m.id_membresia);
-    const precio = Number(m.precio);
+    const precio = Number(m.precio_acordado);
     resultados.push({
       id_membresia: m.id_membresia,
       id_cliente: m.id_cliente,
@@ -59,7 +61,7 @@ export async function listarAdeudos() {
   return resultados;
 }
 
-/** Devuelve los adeudos de las membresías del propio cliente (FR-010). */
+/** Devuelve los adeudos de las membresías del propio cliente (FR-020). */
 export async function listarAdeudosPorCorreo(correo) {
   const { obtenerPorCorreo } = await import('../models/cliente.model.js');
   const cliente = await obtenerPorCorreo(correo);
@@ -68,7 +70,7 @@ export async function listarAdeudosPorCorreo(correo) {
   const resultados = [];
   for (const m of membresias) {
     const totalPagado = await modelo.sumarPagosPorMembresia(m.id_membresia);
-    const precio = Number(m.precio);
+    const precio = Number(m.precio_acordado);
     resultados.push({
       id_membresia: m.id_membresia,
       id_cliente: m.id_cliente,
@@ -92,8 +94,9 @@ export async function listarPorCorreo(correo) {
   return modelo.listar(cliente.id_cliente);
 }
 
-/** Registra un pago con todas las reglas (FR-007). */
-export async function registrarPago({ idCliente, idMembresia, monto, metodoPago }, idUsuario = null) {
+/** Registra un pago con todas las reglas (FR-014) y protección de duplicados
+ *  por id_operacion (FR-017, contracts/api-sprint2.md §1.2). */
+export async function registrarPago({ idCliente, idMembresia, monto, metodoPago, idOperacion = null }, idUsuario = null) {
   // 1. Monto positivo.
   const montoNum = Number(monto);
   if (!(montoNum > 0)) {
@@ -117,12 +120,25 @@ export async function registrarPago({ idCliente, idMembresia, monto, metodoPago 
     throw new ErrorServicio('La membresía no pertenece a ese cliente', 400);
   }
 
-  // 4. Registra el pago (permite parciales: no valida saldo restante).
+  // 4. Protección de duplicados (FR-017): mismo (id_cliente, id_operacion) → 409.
+  const operacion = idOperacion ? String(idOperacion).trim() : null;
+  if (operacion) {
+    const existe = await modelo.existeOperacion(Number(idCliente), operacion);
+    if (existe) {
+      throw new ErrorServicio(
+        'Ya existe un pago registrado con ese id_operacion para este cliente',
+        409
+      );
+    }
+  }
+
+  // 5. Registra el pago (permite parciales: no valida saldo restante).
   const id = await modelo.crear({
     idCliente: Number(idCliente),
     idMembresia: Number(idMembresia),
     monto: montoNum,
     metodoPago,
+    idOperacion: operacion,
   });
 
   await auditoria.registrarAccion({

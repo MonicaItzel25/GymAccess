@@ -29,8 +29,8 @@ async function crearMembresiaActiva(idCliente, fechaInicio = '2026-01-01', fecha
     [`Tipo vida ${Date.now()}-${Math.random()}`, 'Para pruebas', 30, 500]
   );
   const [rMem] = await pool.execute(
-    'INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?)',
-    [idCliente, rTipo.insertId, fechaInicio, fechaFin, 'activa']
+    'INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado, precio_acordado) VALUES (?, ?, ?, ?, ?, ?)',
+    [idCliente, rTipo.insertId, fechaInicio, fechaFin, 'activa', 500]
   );
   return { idMembresia: rMem.insertId, idTipo: rTipo.insertId };
 }

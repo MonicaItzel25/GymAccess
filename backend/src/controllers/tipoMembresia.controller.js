@@ -1,6 +1,6 @@
 // controllers/tipoMembresia.controller.js
 // Endpoints de tipos de membresía. Escritura (POST/PUT): solo administrador
-// (FR-001). Consulta (GET): administrador y recepcionista. ES Modules.
+// (FR-001, FR-004). Consulta (GET): administrador y recepcionista. ES Modules.
 
 import * as servicio from '../services/tipoMembresia.service.js';
 import { enviarOk, envolverControlador } from '../utils/response.js';

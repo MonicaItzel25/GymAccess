@@ -1,7 +1,7 @@
 // validators/usuario.validators.js
 // Reglas de validación para la gestión de usuarios.
 // Política de contraseña: mínimo 8 caracteres, al menos una mayúscula y un
-// número (FR-028). ES Modules.
+// número (data-model.md, Sprint 1). ES Modules.
 
 import { body } from 'express-validator';
 

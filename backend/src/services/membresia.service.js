@@ -1,8 +1,8 @@
 // services/membresia.service.js
 // Lógica de negocio de las membresías: asignación, consulta y estado vigente.
-// Reglas clave: cliente y tipo deben existir y estar activos (FR-004); la
-// fecha_fin se calcula con la duración del tipo (FR-003); solo una membresía
-// vigente por cliente dentro de una transacción (FR-025). ES Modules.
+// Reglas clave: cliente y tipo deben existir y estar activos (FR-006); la
+// fecha_fin se calcula con la duración del tipo (FR-007); solo una membresía
+// vigente por cliente dentro de una transacción (FR-008, RN-015). ES Modules.
 
 import * as modelo from '../models/membresia.model.js';
 import * as tipoModelo from '../models/tipoMembresia.model.js';
@@ -28,12 +28,14 @@ export async function listar({ idCliente = null } = {}) {
   return Promise.all(membresias.map(computarAdeudo));
 };
 
-/** Calcula el adeudo (precio del tipo − suma de pagos) de una membresía. */
+/** Calcula el adeudo (precio acordado − suma de pagos pagados) de una membresía.
+ *  Usa `precio_acordado` para que cambiar el catálogo no altere membresías ya
+ *  emitidas (FR-005, FR-018). */
 async function computarAdeudo(membresia) {
   const totalPagado = await import('../models/pago.model.js').then((m) =>
     m.sumarPagosPorMembresia(membresia.id_membresia)
   );
-  const precio = Number(membresia.precio);
+  const precio = Number(membresia.precio_acordado);
   const adeudo = Math.max(0, precio - Number(totalPagado));
   return { ...membresia, adeudo };
 }
@@ -47,15 +49,15 @@ export async function obtener(id) {
   return membresia;
 }
 
-/** Asigna una membresía a un cliente con todas las reglas (FR-003, FR-004, FR-025). */
+/** Asigna una membresía a un cliente con todas las reglas (FR-006, FR-007, FR-008). */
 export async function asignarMembresia({ idCliente, idTipoMembresia, fechaInicio = null, idUsuario = null }) {
-  // 1. El cliente debe existir (FR-004)
+  // 1. El cliente debe existir (FR-006, RN-002)
   const cliente = await clienteModelo.obtenerPorId(idCliente);
   if (!cliente) {
     throw new ErrorServicio('Cliente no encontrado', 404);
   }
 
-  // 2. El tipo de membresía debe existir y estar activo (FR-004)
+  // 2. El tipo de membresía debe existir y estar activo (FR-006, RN-003)
   const tipo = await tipoModelo.obtenerPorId(idTipoMembresia);
   if (!tipo) {
     throw new ErrorServicio('Tipo de membresía no encontrado', 404);
@@ -67,7 +69,7 @@ export async function asignarMembresia({ idCliente, idTipoMembresia, fechaInicio
   const fechaInicioFinal = fechaInicio || fechaHoy();
   const fechaFin = sumarDias(fechaInicioFinal, Number(tipo.duracion));
 
-  // 3. Una sola membresía vigente por cliente, dentro de una transacción (FR-025)
+  // 3. Una sola membresía vigente por cliente, dentro de una transacción (FR-008, RN-015)
   const conexion = await modelo.iniciarTransaccion();
   try {
     const vigente = await modelo.bloquearVigente(idCliente, conexion);
@@ -80,6 +82,7 @@ export async function asignarMembresia({ idCliente, idTipoMembresia, fechaInicio
         idTipoMembresia,
         fechaInicio: fechaInicioFinal,
         fechaFin,
+        precioAcordado: Number(tipo.precio),
       },
       conexion
     );
@@ -101,7 +104,7 @@ export async function asignarMembresia({ idCliente, idTipoMembresia, fechaInicio
 }
 
 /** Renueva una membresía: cierra la vigente y crea el nuevo periodo
- *  (FR-006, FR-025). Administrador y recepcionista. */
+ *  (FR-011, FR-008). Administrador y recepcionista. */
 export async function renovarMembresia(id, { fechaInicio = null, idTipoMembresia = null } = {}, idUsuario = null) {
   const actual = await obtener(id);
 
@@ -129,6 +132,7 @@ export async function renovarMembresia(id, { fechaInicio = null, idTipoMembresia
         idTipoMembresia: idTipo,
         fechaInicio: fechaInicioFinal,
         fechaFin,
+        precioAcordado: Number(tipo.precio),
       },
       conexion
     );
@@ -149,7 +153,7 @@ export async function renovarMembresia(id, { fechaInicio = null, idTipoMembresia
   }
 }
 
-/** Suspende una membresía (solo administrador, FR-026). */
+/** Suspende una membresía (solo administrador, FR-012). */
 export async function suspenderMembresia(id, idUsuario = null) {
   const actual = await obtener(id);
   if (actual.estado !== 'activa') {
@@ -168,7 +172,7 @@ export async function suspenderMembresia(id, idUsuario = null) {
   return modelo.obtenerPorId(id);
 }
 
-/** Reactiva una membresía suspendida (solo administrador, FR-026). */
+/** Reactiva una membresía suspendida (solo administrador, FR-012). */
 export async function reactivarMembresia(id, idUsuario = null) {
   const actual = await obtener(id);
   if (actual.estado !== 'suspendida') {
@@ -187,7 +191,7 @@ export async function reactivarMembresia(id, idUsuario = null) {
   return modelo.obtenerPorId(id);
 }
 
-/** Cancela una membresía (solo administrador, FR-026). */
+/** Cancela una membresía (solo administrador, FR-012). */
 export async function cancelarMembresia(id, idUsuario = null) {
   const actual = await obtener(id);
   if (actual.estado === 'cancelada') {

@@ -1,14 +1,14 @@
 // models/membresia.model.js
 // Acceso a datos de la tabla `membresias`. Consultas siempre parametrizadas.
 // Incluye las operaciones transaccionales para la regla de una sola membresía
-// vigente por cliente (FR-025). ES Modules.
+// vigente por cliente (FR-008, RN-015). ES Modules.
 
 import { consultar, ejecutar, obtenerPool } from '../config/db.js';
 import { aFechaLocal } from '../utils/fechas.js';
 
 const COLUMNAS_LISTADO = `
   m.id_membresia, m.id_cliente, m.id_tipo_membresia,
-  m.fecha_inicio, m.fecha_fin, m.estado,
+  m.fecha_inicio, m.fecha_fin, m.estado, m.precio_acordado,
   t.nombre AS tipo_nombre, t.duracion, t.precio,
   c.nombre AS cliente_nombre, c.apellido AS cliente_apellido
 `;
@@ -70,12 +70,13 @@ export async function obtenerVigente(idCliente, conexion = null) {
   return normalizarFechas(filas[0] || null);
 }
 
-/** Inserta una membresía y devuelve su identificador.
- *  Acepta una `conexion` opcional para formar parte de una transacción. */
-export async function crear({ idCliente, idTipoMembresia, fechaInicio, fechaFin, estado = 'activa' }, conexion = null) {
-  const sql = `INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado)
-               VALUES (?, ?, ?, ?, ?)`;
-  const parametros = [idCliente, idTipoMembresia, fechaInicio, fechaFin, estado];
+/** Inserta una membresía con el precio acordado capturado al momento de
+ *  asignar/renovar y devuelve su identificador. Acepta una `conexion` opcional
+ *  para formar parte de una transacción. */
+export async function crear({ idCliente, idTipoMembresia, fechaInicio, fechaFin, precioAcordado, estado = 'activa' }, conexion = null) {
+  const sql = `INSERT INTO membresias (id_cliente, id_tipo_membresia, fecha_inicio, fecha_fin, estado, precio_acordado)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+  const parametros = [idCliente, idTipoMembresia, fechaInicio, fechaFin, estado, precioAcordado];
   const resultado = conexion
     ? (await conexion.execute(sql, parametros))[0]
     : await ejecutar(sql, parametros);
@@ -108,7 +109,7 @@ export async function cerrarVigente(id, conexion) {
 }
 
 /** Bloquea con FOR UPDATE la membresía vigente de un cliente dentro de una
- *  transacción, para garantizar una sola vigente por cliente (FR-025). */
+ *  transacción, para garantizar una sola vigente por cliente (FR-008, RN-015). */
 export async function bloquearVigente(idCliente, conexion) {
   const [filas] = await conexion.query(
     `SELECT id_membresia FROM membresias

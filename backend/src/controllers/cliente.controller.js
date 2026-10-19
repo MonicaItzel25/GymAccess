@@ -15,7 +15,7 @@ export const crear = envolverControlador(async (req, res) => {
 /** GET /api/clientes */
 export const listar = envolverControlador(async (req, res) => {
   const buscar = (req.query.buscar || '').toString().trim();
-  // El entrenador solo recibe la información básica de su rol (FR-011).
+  // El entrenador solo recibe la información básica de su rol (FR-017, spec Sprint 1).
   const basicos = req.usuario.rol === 'entrenador';
   const clientes = await servicio.listar({ buscar, basicos });
   return enviarOk(res, clientes);
@@ -23,7 +23,7 @@ export const listar = envolverControlador(async (req, res) => {
 
 /** GET /api/clientes/:id */
 export const obtener = envolverControlador(async (req, res) => {
-  // El entrenador solo recibe la información básica de su rol (FR-011).
+  // El entrenador solo recibe la información básica de su rol (FR-017, spec Sprint 1).
   const basico = req.usuario.rol === 'entrenador';
   const cliente = await servicio.obtener(Number(req.params.id), { basico });
   return enviarOk(res, cliente);

@@ -1,6 +1,6 @@
 // routes/auditoria.routes.js
-// Rutas de auditoría (FR-021). GET /api/auditoria: solo administrador.
-// No existe ninguna ruta DELETE (FR-008, SC-005). ES Modules.
+// Rutas de auditoría (FR-037, FR-038). GET /api/auditoria: solo administrador.
+// No existe ninguna ruta DELETE (FR-038, SC-005). ES Modules.
 
 import { Router } from 'express';
 import { autenticar } from '../middlewares/auth.js';
