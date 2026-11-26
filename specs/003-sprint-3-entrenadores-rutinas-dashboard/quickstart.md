@@ -28,6 +28,7 @@ node --env-file=.env.test validate-sprint2.mjs
 
 - Ejecutar `npm run migrar` SIN `.env.test` conecta con `backend/.env` → `gym_db` de producción. **Prohibido en este sprint** (FR-037).
 - Verificación de no afectación: en `gym_db`, la tabla `migraciones` NO debe contener `007_crear_tablas_sprint3.sql` ni ninguna fila nueva.
+- **No ejecutar el migrador sobre una base nueva, ni siquiera con `.env.test`**: las migraciones `002` y `003` y las dos semillas contienen `USE gym_db;`, por lo que, si no figuran como aplicadas en `migraciones`, escribirían en `gym_db`. El paso 1 queda suspendido hasta revisar este conflicto; si la `007` ya está aplicada, no es necesario.
 
 ## 3. Arranque
 
@@ -51,6 +52,8 @@ cd frontend && npm test   # Vitest + Testing Library
 ```
 
 **Esperado**: 100% de las suites nuevas (éxito, validación, permisos por rol, denegaciones — FR-038) y 100% de las suites existentes de los Sprints 1 y 2, sin regresiones (SC-008, SC-010).
+
+**Protección de la base**: antes de cargar cada archivo de pruebas, `backend/tests/setup/protegerBase.js` detiene Vitest si `DB_NAME` no es `gym_db_pruebas` o `DB_HOST` no es local. Por eso las pruebas del backend deben lanzarse con `npm test`.
 
 **Importante**: `npm test` vacía `gym_db_pruebas`. Tras cada ejecución, volver al paso 2 (`validate-sprint2.mjs`) antes de la validación manual. Si `007` figura como aplicada en `migraciones`, no hace falta repetir el migrador.
 

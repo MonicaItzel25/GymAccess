@@ -30,9 +30,9 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 **Propósito**: verificar el entorno y los insumos antes de tocar código (constitución V: leer `docs/project-context.md`, `docs/reglas.md` y el documento de entrada del sprint).
 
-- [ ] T001 Revisar los insumos del sprint (`docs/sprint-3.md`, `docs/reglas.md`, `docs/project-context.md`, `.specify/memory/constitution.md`) y confirmar que el alcance a implementar coincide con `specs/003-sprint-3-entrenadores-rutinas-dashboard/spec.md`
-- [ ] T002 Verificar el entorno de pruebas: `backend/.env.test` apunta a `gym_db_pruebas` (nunca `gym_db`) y el backend arranca con `node --env-file=.env.test src/server.js` según `specs/003-sprint-3-entrenadores-rutinas-dashboard/quickstart.md` §1–§3
-- [ ] T003 [P] Establecer línea base verde: ejecutar `npm test` en `backend/` y `frontend/` y confirmar 100% de suites de los Sprints 1 y 2 en verde antes de iniciar cambios (regresión de referencia para SC-008/SC-010 en `backend/tests/`)
+- [X] T001 Revisar los insumos del sprint (`docs/sprint-3.md`, `docs/reglas.md`, `docs/project-context.md`, `.specify/memory/constitution.md`) y confirmar que el alcance a implementar coincide con `specs/003-sprint-3-entrenadores-rutinas-dashboard/spec.md`
+- [X] T002 Verificar el entorno de pruebas: `backend/.env.test` apunta a `gym_db_pruebas` (nunca `gym_db`) y el backend arranca con `node --env-file=.env.test src/server.js` según `specs/003-sprint-3-entrenadores-rutinas-dashboard/quickstart.md` §1–§3
+- [X] T003 [P] Establecer línea base verde: ejecutar `npm test` en `backend/` y `frontend/` y confirmar 100% de suites de los Sprints 1 y 2 en verde antes de iniciar cambios (regresión de referencia para SC-008/SC-010 en `backend/tests/`)
 
 ---
 
@@ -42,9 +42,9 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 **?? CRÍTICO**: ninguna historia puede comenzar hasta completar esta fase.
 
-- [ ] T004 Crear la migración `database/migrations/007_crear_tablas_sprint3.sql` con las 7 tablas de `data-model.md` §1–§6 (`entrenadores`, `asignaciones_entrenador`, `ejercicios`, `rutinas`, `ejercicio_rutina`, `objetivos`, `progresos`); SIN `USE gym_db;` (convención de `data-model.md` §0, patrón de las migraciones 004–006), con PK/FK `ON DELETE RESTRICT ON UPDATE CASCADE`, `KEY idx_*`, `UNIQUE uq_entrenadores_usuario (id_usuario)`, `UNIQUE uq_ejercicios_nombre (nombre)`, columna generada `esta_vigente` + `UNIQUE (id_cliente, esta_vigente)` y columna generada `esta_activa` + `UNIQUE (id_cliente, esta_activa)` (research R-03)
-- [ ] T005 Aplicar la migración SOLO en `gym_db_pruebas`: desde `backend/` ejecutar `node --env-file=.env.test ../database/migrate.mjs` y verificar la salida «+ Aplicado: 007_crear_tablas_sprint3.sql»; comprobar además que `gym_db.migraciones` NO contiene la 007 (FR-037; ejecutar `npm run migrar` sin `.env.test` está prohibido)
-- [ ] T006 [P] Ampliar `backend/tests/helpers/baseDatos.js` (`vaciarTablas()`) con las 7 tablas nuevas, conservando la guarda `verificarBasePruebas()` intacta
+- [X] T004 Crear la migración `database/migrations/007_crear_tablas_sprint3.sql` con las 7 tablas de `data-model.md` §1–§6 (`entrenadores`, `asignaciones_entrenador`, `ejercicios`, `rutinas`, `ejercicio_rutina`, `objetivos`, `progresos`); SIN `USE gym_db;` (convención de `data-model.md` §0, patrón de las migraciones 004–006), con PK/FK `ON DELETE RESTRICT ON UPDATE CASCADE`, `KEY idx_*`, `UNIQUE uq_entrenadores_usuario (id_usuario)`, `UNIQUE uq_ejercicios_nombre (nombre)`, columna generada `esta_vigente` + `UNIQUE (id_cliente, esta_vigente)` y columna generada `esta_activa` + `UNIQUE (id_cliente, esta_activa)` (research R-03)
+- [X] T005 Aplicar la migración SOLO en `gym_db_pruebas`: desde `backend/` ejecutar `node --env-file=.env.test ../database/migrate.mjs` y verificar la salida «+ Aplicado: 007_crear_tablas_sprint3.sql»; comprobar además que `gym_db.migraciones` NO contiene la 007 (FR-037; ejecutar `npm run migrar` sin `.env.test` está prohibido)
+- [X] T006 [P] Ampliar `backend/tests/helpers/baseDatos.js` (`vaciarTablas()`) con las 7 tablas nuevas, conservando la guarda `verificarBasePruebas()` intacta
 
 **Punto de verificación**: base de pruebas con las 7 tablas y helper de pruebas al día; las historias pueden empezar en paralelo.
 
@@ -60,20 +60,20 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T007 [P] [US1] Prueba de contrato en `backend/tests/contract/entrenadores.contract.test.js`: alta 201 con cuenta rol `entrenador`, perfil duplicado 400, cuenta con otro rol 400 con mensaje claro (US-S3-01.2), `id_usuario` inexistente 404, 403 para recepcionista/entrenador/cliente en escritura (US-S3-01.3), `GET` permitido a administrador y recepcionista
-- [ ] T008 [P] [US1] Prueba de integración en `backend/tests/integration/entrenadores.integration.test.js`: modificar información y cambiar estado (US-S3-01.4) y verificar que ambas acciones quedan en `auditoria` con actor, acción, fecha/hora, entidad y resultado (FR-004, SC-005)
-- [ ] T009 [P] [US1] Prueba frontend en `frontend/src/pages/Entrenadores.test.jsx`: listado, alta desde formulario, mensaje de error en rechazo y estado vacío
+- [X] T007 [P] [US1] Prueba de contrato en `backend/tests/contract/entrenadores.contract.test.js`: alta 201 con cuenta rol `entrenador`, perfil duplicado 400, cuenta con otro rol 400 con mensaje claro (US-S3-01.2), `id_usuario` inexistente 404, 403 para recepcionista/entrenador/cliente en escritura (US-S3-01.3), `GET` permitido a administrador y recepcionista
+- [X] T008 [P] [US1] Prueba de integración en `backend/tests/integration/entrenadores.integration.test.js`: modificar información y cambiar estado (US-S3-01.4) y verificar que ambas acciones quedan en `auditoria` con actor, acción, fecha/hora, entidad y resultado (FR-004, SC-005)
+- [X] T009 [P] [US1] Prueba frontend en `frontend/src/pages/Entrenadores.test.jsx`: listado, alta desde formulario, mensaje de error en rechazo y estado vacío
 
 ### Implementación para la Historia 1
 
-- [ ] T010 [P] [US1] Crear el modelo `backend/src/models/entrenador.model.js` con las columnas de `data-model.md` §1 (`id_usuario UNIQUE`, `especialidad VARCHAR(150) NULL`, `telefono VARCHAR(20) NULL`, `estado ENUM('activo','inactivo')`, `fecha_creacion`) y operaciones listar/obtener/crear/actualizar/cambiar estado
-- [ ] T011 [P] [US1] Crear los validadores `backend/src/validators/entrenador.validators.js` con `express-validator`: `id_usuario` entero > 0; `especialidad` opcional ≤ 150; `telefono` opcional ≤ 20; `estado` solo `activo|inactivo`
-- [ ] T012 [US1] Crear el servicio `backend/src/services/entrenador.service.js`: exige que la cuenta exista, tenga `rol = 'entrenador'` y no tenga ya perfil (FR-001/RN-002); registra auditoría con `registrarAccion` en crear/modificar/cambiar estado (FR-004)
-- [ ] T013 [US1] Crear el controlador `backend/src/controllers/entrenador.controller.js` con `enviarOk`/`envolverControlador` (`backend/src/utils/response.js`)
-- [ ] T014 [US1] Crear las rutas `backend/src/routes/entrenador.routes.js` (`GET /` y `GET /:id` → `autorizar('administrador','recepcionista')`; `POST /`, `PUT /:id`, `PUT /:id/estado` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/entrenadores`
-- [ ] T015 [P] [US1] Añadir los métodos de este módulo en `frontend/src/services/api.js` (`listarEntrenadores`, `crearEntrenador`, `actualizarEntrenador`, `cambiarEstadoEntrenador`) según `contracts/api.md` §1
-- [ ] T016 [US1] Crear la pantalla `frontend/src/pages/Entrenadores.jsx` (listado con estado y especialidad, alta desde cuenta existente, edición, activar/desactivar, estados vacíos y mensajes de error, estética Dark Fitness y `prefers-reduced-motion`)
-- [ ] T017 [US1] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx` (la ocultación es ayuda visual; la autorización real está en T014)
+- [X] T010 [P] [US1] Crear el modelo `backend/src/models/entrenador.model.js` con las columnas de `data-model.md` §1 (`id_usuario UNIQUE`, `especialidad VARCHAR(150) NULL`, `telefono VARCHAR(20) NULL`, `estado ENUM('activo','inactivo')`, `fecha_creacion`) y operaciones listar/obtener/crear/actualizar/cambiar estado
+- [X] T011 [P] [US1] Crear los validadores `backend/src/validators/entrenador.validators.js` con `express-validator`: `id_usuario` entero > 0; `especialidad` opcional ≤ 150; `telefono` opcional ≤ 20; `estado` solo `activo|inactivo`
+- [X] T012 [US1] Crear el servicio `backend/src/services/entrenador.service.js`: exige que la cuenta exista, tenga `rol = 'entrenador'` y no tenga ya perfil (FR-001/RN-002); registra auditoría con `registrarAccion` en crear/modificar/cambiar estado (FR-004)
+- [X] T013 [US1] Crear el controlador `backend/src/controllers/entrenador.controller.js` con `enviarOk`/`envolverControlador` (`backend/src/utils/response.js`)
+- [X] T014 [US1] Crear las rutas `backend/src/routes/entrenador.routes.js` (`GET /` y `GET /:id` → `autorizar('administrador','recepcionista')`; `POST /`, `PUT /:id`, `PUT /:id/estado` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/entrenadores`
+- [X] T015 [P] [US1] Añadir los métodos de este módulo en `frontend/src/services/api.js` (`listarEntrenadores`, `crearEntrenador`, `actualizarEntrenador`, `cambiarEstadoEntrenador`) según `contracts/api.md` §1
+- [X] T016 [US1] Crear la pantalla `frontend/src/pages/Entrenadores.jsx` (listado con estado y especialidad, alta desde cuenta existente, edición, activar/desactivar, estados vacíos y mensajes de error, estética Dark Fitness y `prefers-reduced-motion`)
+- [X] T017 [US1] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx` (la ocultación es ayuda visual; la autorización real está en T014)
 
 **Punto de verificación**: Historia 1 funcional y testeable de forma independiente (US-S3-01 completa).
 
@@ -89,20 +89,20 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T018 [P] [US2] Prueba de contrato en `backend/tests/contract/asignaciones.contract.test.js`: `POST` 201, segunda vigente 400 (US-S3-02.2), cliente/entrenador inexistente 404, entrenador inactivo 400 (US-S3-02.3), `PUT /:id/finalizar` 200 y 400 si ya estaba finalizada, 403 para entrenador y cliente (US-S3-02.5)
-- [ ] T019 [P] [US2] Prueba de integración en `backend/tests/integration/asignaciones.integration.test.js`: alta y finalización registran auditoría con actor/acción/fecha/entidad/resultado (FR-009, SC-005) y el `GET` devuelve nombre del cliente (incluido el filtro `vigentes=true`)
-- [ ] T020 [P] [US2] Prueba frontend en `frontend/src/pages/Asignaciones.test.jsx`: formulario de alta, rechazo mostrado y confirmación de finalización
+- [X] T018 [P] [US2] Prueba de contrato en `backend/tests/contract/asignaciones.contract.test.js`: `POST` 201, segunda vigente 400 (US-S3-02.2), cliente/entrenador inexistente 404, entrenador inactivo 400 (US-S3-02.3), `PUT /:id/finalizar` 200 y 400 si ya estaba finalizada, 403 para entrenador y cliente (US-S3-02.5)
+- [X] T019 [P] [US2] Prueba de integración en `backend/tests/integration/asignaciones.integration.test.js`: alta y finalización registran auditoría con actor/acción/fecha/entidad/resultado (FR-009, SC-005) y el `GET` devuelve nombre del cliente (incluido el filtro `vigentes=true`)
+- [X] T020 [P] [US2] Prueba frontend en `frontend/src/pages/Asignaciones.test.jsx`: formulario de alta, rechazo mostrado y confirmación de finalización
 
 ### Implementación para la Historia 2
 
-- [ ] T021 [P] [US2] Crear el modelo `backend/src/models/asignacion.model.js` con `data-model.md` §2: alta validada y registrada en transacción contra `UNIQUE (id_cliente, esta_vigente)`, finalizar con `fecha_fin`, listado con filtros `entrenador`/`vigentes` y nombre del cliente (`JOIN clientes`)
-- [ ] T022 [P] [US2] Crear los validadores `backend/src/validators/asignacion.validators.js`: `id_cliente` e `id_entrenador` enteros > 0; `fecha_inicio`/`fecha_fin` fechas `YYYY-MM-DD` opcionales
-- [ ] T023 [US2] Crear el servicio `backend/src/services/asignacion.service.js`: cliente `activo`, entrenador registrado y `activo`, rechazo de segunda asignación vigente (FR-006), finalización que rellena `fecha_fin` (FR-007) y auditoría (FR-009)
-- [ ] T024 [US2] Crear el controlador `backend/src/controllers/asignacion.controller.js`
-- [ ] T025 [US2] Crear las rutas `backend/src/routes/asignacion.routes.js` (`GET /` → `administrador|recepcionista|entrenador` con retorno limitado a las propias para el entrenador según `contracts/api.md` §2; `POST /` y `PUT /:id/finalizar` → `administrador|recepcionista`) y montarlas en `backend/src/app.js` bajo `/api/asignaciones`
-- [ ] T026 [P] [US2] Añadir los métodos en `frontend/src/services/api.js` (`listarAsignaciones`, `crearAsignacion`, `finalizarAsignacion`)
-- [ ] T027 [US2] Crear la pantalla `frontend/src/pages/Asignaciones.jsx` (alta de entrenador a cliente, listado con historial y estados, finalización con confirmación, errores comprensibles)
-- [ ] T028 [US2] Registrar la ruta y el menú para administrador y recepcionista en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T021 [P] [US2] Crear el modelo `backend/src/models/asignacion.model.js` con `data-model.md` §2: alta validada y registrada en transacción contra `UNIQUE (id_cliente, esta_vigente)`, finalizar con `fecha_fin`, listado con filtros `entrenador`/`vigentes` y nombre del cliente (`JOIN clientes`)
+- [X] T022 [P] [US2] Crear los validadores `backend/src/validators/asignacion.validators.js`: `id_cliente` e `id_entrenador` enteros > 0; `fecha_inicio`/`fecha_fin` fechas `YYYY-MM-DD` opcionales
+- [X] T023 [US2] Crear el servicio `backend/src/services/asignacion.service.js`: cliente `activo`, entrenador registrado y `activo`, rechazo de segunda asignación vigente (FR-006), finalización que rellena `fecha_fin` (FR-007) y auditoría (FR-009)
+- [X] T024 [US2] Crear el controlador `backend/src/controllers/asignacion.controller.js`
+- [X] T025 [US2] Crear las rutas `backend/src/routes/asignacion.routes.js` (`GET /` → `administrador|recepcionista|entrenador` con retorno limitado a las propias para el entrenador según `contracts/api.md` §2; `POST /` y `PUT /:id/finalizar` → `administrador|recepcionista`) y montarlas en `backend/src/app.js` bajo `/api/asignaciones`
+- [X] T026 [P] [US2] Añadir los métodos en `frontend/src/services/api.js` (`listarAsignaciones`, `crearAsignacion`, `finalizarAsignacion`)
+- [X] T027 [US2] Crear la pantalla `frontend/src/pages/Asignaciones.jsx` (alta de entrenador a cliente, listado con historial y estados, finalización con confirmación, errores comprensibles)
+- [X] T028 [US2] Registrar la ruta y el menú para administrador y recepcionista en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 2 funcional; las historias 1 y 2 operan juntas sin interferencias.
 
@@ -118,20 +118,20 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T029 [P] [US3] Prueba de contrato en `backend/tests/contract/ejercicios.contract.test.js`: `POST` 201, nombre duplicado 400, campos vacíos 400, 403 para recepcionista y cliente en escritura (US-S3-08.4), 403 para entrenador en escritura (US-S3-08.5), `GET` del entrenador solo con ejercicios `activo` (FR-012)
-- [ ] T030 [P] [US3] Prueba de integración en `backend/tests/integration/ejercicios.integration.test.js`: crear y modificar quedan en auditoría (FR-013) y la desactivación deja el ejercicio inactivo sin borrarlo (SC-004)
-- [ ] T031 [P] [US3] Prueba frontend en `frontend/src/pages/Ejercicios.test.jsx`: CRUD del administrador y vista de solo lectura para entrenador
+- [X] T029 [P] [US3] Prueba de contrato en `backend/tests/contract/ejercicios.contract.test.js`: `POST` 201, nombre duplicado 400, campos vacíos 400, 403 para recepcionista y cliente en escritura (US-S3-08.4), 403 para entrenador en escritura (US-S3-08.5), `GET` del entrenador solo con ejercicios `activo` (FR-012)
+- [X] T030 [P] [US3] Prueba de integración en `backend/tests/integration/ejercicios.integration.test.js`: crear y modificar quedan en auditoría (FR-013) y la desactivación deja el ejercicio inactivo sin borrarlo (SC-004)
+- [X] T031 [P] [US3] Prueba frontend en `frontend/src/pages/Ejercicios.test.jsx`: CRUD del administrador y vista de solo lectura para entrenador
 
 ### Implementación para la Historia 3
 
-- [ ] T032 [P] [US3] Crear el modelo `backend/src/models/ejercicio.model.js` con `data-model.md` §3 (`nombre VARCHAR(100) NOT NULL UNIQUE`, `descripcion VARCHAR(255) NOT NULL`, `grupo_muscular VARCHAR(50) NULL`, `estado ENUM('activo','inactivo')`) y filtro de estado
-- [ ] T033 [P] [US3] Crear los validadores `backend/src/validators/ejercicio.validators.js`: `nombre` no vacío ≤ 100, `descripcion` no vacía ≤ 255, `grupo_muscular` opcional ≤ 50, `estado` solo `activo|inactivo`
-- [ ] T034 [US3] Crear el servicio `backend/src/services/ejercicio.service.js`: escritura exclusiva del administrador, unicidad de nombre con mensaje claro, filtro de solo `activo` para el entrenador (Clarification Q2) y auditoría (FR-013)
-- [ ] T035 [US3] Crear el controlador `backend/src/controllers/ejercicio.controller.js`
-- [ ] T036 [US3] Crear las rutas `backend/src/routes/ejercicio.routes.js` (`GET /` → `administrador|entrenador`; `POST /`, `PUT /:id`, `PUT /:id/estado` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/ejercicios`
-- [ ] T037 [P] [US3] Añadir los métodos en `frontend/src/services/api.js` (`listarEjercicios`, `crearEjercicio`, `actualizarEjercicio`, `cambiarEstadoEjercicio`)
-- [ ] T038 [US3] Crear la pantalla `frontend/src/pages/Ejercicios.jsx` (CRUD del administrador; para el entrenador, catálogo de solo lectura sin controles de escritura)
-- [ ] T039 [US3] Registrar la ruta y el menú para administrador y entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T032 [P] [US3] Crear el modelo `backend/src/models/ejercicio.model.js` con `data-model.md` §3 (`nombre VARCHAR(100) NOT NULL UNIQUE`, `descripcion VARCHAR(255) NOT NULL`, `grupo_muscular VARCHAR(50) NULL`, `estado ENUM('activo','inactivo')`) y filtro de estado
+- [X] T033 [P] [US3] Crear los validadores `backend/src/validators/ejercicio.validators.js`: `nombre` no vacío ≤ 100, `descripcion` no vacía ≤ 255, `grupo_muscular` opcional ≤ 50, `estado` solo `activo|inactivo`
+- [X] T034 [US3] Crear el servicio `backend/src/services/ejercicio.service.js`: escritura exclusiva del administrador, unicidad de nombre con mensaje claro, filtro de solo `activo` para el entrenador (Clarification Q2) y auditoría (FR-013)
+- [X] T035 [US3] Crear el controlador `backend/src/controllers/ejercicio.controller.js`
+- [X] T036 [US3] Crear las rutas `backend/src/routes/ejercicio.routes.js` (`GET /` → `administrador|entrenador`; `POST /`, `PUT /:id`, `PUT /:id/estado` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/ejercicios`
+- [X] T037 [P] [US3] Añadir los métodos en `frontend/src/services/api.js` (`listarEjercicios`, `crearEjercicio`, `actualizarEjercicio`, `cambiarEstadoEjercicio`)
+- [X] T038 [US3] Crear la pantalla `frontend/src/pages/Ejercicios.jsx` (CRUD del administrador; para el entrenador, catálogo de solo lectura sin controles de escritura)
+- [X] T039 [US3] Registrar la ruta y el menú para administrador y entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 3 funcional; el catálogo es reutilizable por las rutinas (Historia 4).
 
@@ -147,20 +147,20 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T040 [P] [US4] Prueba de contrato en `backend/tests/contract/rutinas.contract.test.js`: `POST` 201 con asignación vigente, 403 sin asignación (US-S3-03.2), 403 para un entrenador desactivado con asignación vigente (FR-003), 400 con ejercicio `inactivo` (US-S3-03.3), 400 con parámetros inválidos (series/repeticiones < 1, peso/descanso < 0, `instrucciones` vacío), 403 para recepcionista/cliente/administrador (US-S3-03.5), `PATCH /:id/estado` 200
-- [ ] T041 [P] [US4] Prueba de integración en `backend/tests/integration/rutinas.integration.test.js`: activar una rutina nueva deja la anterior `inactiva` (solo una activa por cliente, Q5/SC-003), modificar conserva el historial de versiones (FR-015), un entrenador con cliente reasignado puede consultar y modificar la rutina creada por otro (Q1, FR-017) y las acciones quedan en auditoría (FR-018)
-- [ ] T042 [P] [US4] Prueba frontend en `frontend/src/pages/Rutinas.test.jsx`: creación con ejercicios, activación y estados de error
+- [X] T040 [P] [US4] Prueba de contrato en `backend/tests/contract/rutinas.contract.test.js`: `POST` 201 con asignación vigente, 403 sin asignación (US-S3-03.2), 403 para un entrenador desactivado con asignación vigente (FR-003), 400 con ejercicio `inactivo` (US-S3-03.3), 400 con parámetros inválidos (series/repeticiones < 1, peso/descanso < 0, `instrucciones` vacío), 403 para recepcionista/cliente/administrador (US-S3-03.5), `PATCH /:id/estado` 200
+- [X] T041 [P] [US4] Prueba de integración en `backend/tests/integration/rutinas.integration.test.js`: activar una rutina nueva deja la anterior `inactiva` (solo una activa por cliente, Q5/SC-003), modificar conserva el historial de versiones (FR-015), un entrenador con cliente reasignado puede consultar y modificar la rutina creada por otro (Q1, FR-017) y las acciones quedan en auditoría (FR-018)
+- [X] T042 [P] [US4] Prueba frontend en `frontend/src/pages/Rutinas.test.jsx`: creación con ejercicios, activación y estados de error
 
 ### Implementación para la Historia 4
 
-- [ ] T043 [P] [US4] Crear el modelo `backend/src/models/rutina.model.js` con `data-model.md` §4: tabla `rutinas` (columna generada `esta_activa` + `UNIQUE (id_cliente, esta_activa)`, `fecha_creacion`, `fecha_actualizacion`, `fecha_activacion`) y `ejercicio_rutina` (PK surrogate `id_rutina_ejercicio`, `orden`, `series`, `repeticiones`, `peso_recomendado DECIMAL(6,2) NULL`, `descanso_segundos INT NULL`, `instrucciones TEXT NULL`), con transacción de activación
-- [ ] T044 [P] [US4] Crear los validadores `backend/src/validators/rutina.validators.js`: `nombre` no vacío ≤ 100; `ejercicios` con al menos una fila; por fila `series`/`repeticiones` enteros 1–999, `peso_recomendado` 0–999.99, `descanso_segundos` 0–3600, `instrucciones` no vacío cuando se capture (FR-016, RN-007, research R-10)
-- [ ] T045 [US4] Crear el servicio `backend/src/services/rutina.service.js`: exige asignación vigente con el cliente y entrenador activo, aunque la rutina la creara otro entrenador (Q1/FR-017; FR-003), rechaza ejercicios `inactivo` en rutinas nuevas (RN-008), activación transaccional que desactiva la anterior (Q5/FR-015) y auditoría (FR-018)
-- [ ] T046 [US4] Crear el controlador `backend/src/controllers/rutina.controller.js`
-- [ ] T047 [US4] Crear las rutas `backend/src/routes/rutina.routes.js` (`GET /`, `GET /:id`, `POST /`, `PUT /:id`, `PATCH /:id/estado` → todos `autorizar('entrenador')`) y montarlas en `backend/src/app.js` bajo `/api/rutinas`
-- [ ] T048 [P] [US4] Añadir los métodos en `frontend/src/services/api.js` (`listarRutinas`, `obtenerRutina`, `crearRutina`, `actualizarRutina`, `cambiarEstadoRutina`) y `listarAsignaciones` para poblar el selector de clientes propios (contracts §2, rol entrenador)
-- [ ] T049 [US4] Crear la pantalla `frontend/src/pages/Rutinas.jsx` (listado de rutinas, detalle con ejercicios y parámetros, crear/editar con ejercicios del catálogo, activar/desactivar con confirmación)
-- [ ] T050 [US4] Registrar la ruta y el menú para entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T043 [P] [US4] Crear el modelo `backend/src/models/rutina.model.js` con `data-model.md` §4: tabla `rutinas` (columna generada `esta_activa` + `UNIQUE (id_cliente, esta_activa)`, `fecha_creacion`, `fecha_actualizacion`, `fecha_activacion`) y `ejercicio_rutina` (PK surrogate `id_rutina_ejercicio`, `orden`, `series`, `repeticiones`, `peso_recomendado DECIMAL(6,2) NULL`, `descanso_segundos INT NULL`, `instrucciones TEXT NULL`), con transacción de activación
+- [X] T044 [P] [US4] Crear los validadores `backend/src/validators/rutina.validators.js`: `nombre` no vacío ≤ 100; `ejercicios` con al menos una fila; por fila `series`/`repeticiones` enteros 1–999, `peso_recomendado` 0–999.99, `descanso_segundos` 0–3600, `instrucciones` no vacío cuando se capture (FR-016, RN-007, research R-10)
+- [X] T045 [US4] Crear el servicio `backend/src/services/rutina.service.js`: exige asignación vigente con el cliente y entrenador activo, aunque la rutina la creara otro entrenador (Q1/FR-017; FR-003), rechaza ejercicios `inactivo` en rutinas nuevas (RN-008), activación transaccional que desactiva la anterior (Q5/FR-015) y auditoría (FR-018)
+- [X] T046 [US4] Crear el controlador `backend/src/controllers/rutina.controller.js`
+- [X] T047 [US4] Crear las rutas `backend/src/routes/rutina.routes.js` (`GET /`, `GET /:id`, `POST /`, `PUT /:id`, `PATCH /:id/estado` → todos `autorizar('entrenador')`) y montarlas en `backend/src/app.js` bajo `/api/rutinas`
+- [X] T048 [P] [US4] Añadir los métodos en `frontend/src/services/api.js` (`listarRutinas`, `obtenerRutina`, `crearRutina`, `actualizarRutina`, `cambiarEstadoRutina`) y `listarAsignaciones` para poblar el selector de clientes propios (contracts §2, rol entrenador)
+- [X] T049 [US4] Crear la pantalla `frontend/src/pages/Rutinas.jsx` (listado de rutinas, detalle con ejercicios y parámetros, crear/editar con ejercicios del catálogo, activar/desactivar con confirmación)
+- [X] T050 [US4] Registrar la ruta y el menú para entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 4 funcional; las historias 2, 3 y 4 operan juntas (asignar → catálogo → rutina).
 
@@ -176,26 +176,26 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T051 [P] [US5] Prueba de contrato en `backend/tests/contract/objetivos-progresos.contract.test.js`: `POST /api/objetivos` 201, campos vacíos 400, `POST /api/progresos` 201, sin `valor_numerico` ni `avance` 400 (FR-020), `id_objetivo` de otro cliente 400, sin asignación 403 (US-S3-04.3), 403 para un entrenador desactivado con asignación vigente (FR-003), 403 para recepcionista/cliente (US-S3-04.5) y para el administrador en detalle (Q4)
-- [ ] T052 [P] [US5] Prueba de integración en `backend/tests/integration/objetivos-progresos.integration.test.js`: cierre de objetivo con `fecha_cierre` conservando historial (SC-004), entradas anteriores intactas tras nuevas registraciones (US-S3-04.4) y auditoría de ambas operaciones (FR-022)
-- [ ] T053 [P] [US5] Prueba frontend en `frontend/src/pages/ObjetivosProgreso.test.jsx`: alta de objetivo, registro de progreso y estados de error
+- [X] T051 [P] [US5] Prueba de contrato en `backend/tests/contract/objetivos-progresos.contract.test.js`: `POST /api/objetivos` 201, campos vacíos 400, `POST /api/progresos` 201, sin `valor_numerico` ni `avance` 400 (FR-020), `id_objetivo` de otro cliente 400, sin asignación 403 (US-S3-04.3), 403 para un entrenador desactivado con asignación vigente (FR-003), 403 para recepcionista/cliente (US-S3-04.5) y para el administrador en detalle (Q4)
+- [X] T052 [P] [US5] Prueba de integración en `backend/tests/integration/objetivos-progresos.integration.test.js`: cierre de objetivo con `fecha_cierre` conservando historial (SC-004), entradas anteriores intactas tras nuevas registraciones (US-S3-04.4) y auditoría de ambas operaciones (FR-022)
+- [X] T053 [P] [US5] Prueba frontend en `frontend/src/pages/ObjetivosProgreso.test.jsx`: alta de objetivo, registro de progreso y estados de error
 
 ### Implementación para la Historia 5
 
-- [ ] T054 [P] [US5] Crear el modelo `backend/src/models/objetivo.model.js` con `data-model.md` §5 (`meta VARCHAR(255) NOT NULL`, `unidad VARCHAR(30) NULL`, `fecha_objetivo DATE NOT NULL`, `estado ENUM('activo','alcanzado','cerrado')`, `fecha_registro`, `fecha_cierre`)
-- [ ] T055 [P] [US5] Crear el modelo `backend/src/models/progreso.model.js` con `data-model.md` §6 (`valor_numerico DECIMAL(8,2) NULL`, `avance VARCHAR(150) NULL`, `comentario VARCHAR(255) NULL`, `fecha DATE NOT NULL`, índices `(id_cliente, fecha)` y `fecha`)
-- [ ] T056 [P] [US5] Crear los validadores `backend/src/validators/objetivo.validators.js`: `id_cliente` entero > 0, `meta` no vacía ≤ 255, `unidad` opcional ≤ 30, `fecha_objetivo` fecha válida, `estado` solo `alcanzado|cerrado` en cierre
-- [ ] T057 [P] [US5] Crear los validadores `backend/src/validators/progreso.validators.js`: `id_cliente` entero > 0, `fecha` fecha válida, `valor_numerico` ≥ 0 opcional, `avance` ≤ 150 opcional, `comentario` ≤ 255 opcional, y exige al menos uno entre `valor_numerico` y `avance` (FR-020)
-- [ ] T058 [US5] Crear el servicio `backend/src/services/objetivo.service.js`: exige asignación vigente con entrenador activo (RN-005/FR-003), transiciones terminales con `fecha_cierre` (data-model §5), sin borrado físico y auditoría (FR-022)
-- [ ] T059 [US5] Crear el servicio `backend/src/services/progreso.service.js`: exige asignación vigente con entrenador activo (FR-003), al menos valor o avance, `id_objetivo` existente y del mismo cliente, presentación como seguimiento deportivo nunca diagnóstico médico (RN-013) y auditoría (FR-022)
-- [ ] T060 [US5] Crear el controlador `backend/src/controllers/objetivo.controller.js`
-- [ ] T061 [US5] Crear el controlador `backend/src/controllers/progreso.controller.js`
-- [ ] T062 [P] [US5] Crear las rutas `backend/src/routes/objetivo.routes.js` (`GET /` → `autorizar('entrenador')`; `POST /`, `PUT /:id`, `PATCH /:id/estado` → `autorizar('entrenador')`)
-- [ ] T063 [P] [US5] Crear las rutas `backend/src/routes/progreso.routes.js` (`GET /` → `autorizar('entrenador')`; `POST /` → `autorizar('entrenador')`)
-- [ ] T064 [US5] Montar `/api/objetivos` y `/api/progresos` en `backend/src/app.js`
-- [ ] T065 [P] [US5] Añadir los métodos en `frontend/src/services/api.js` (`listarObjetivos`, `crearObjetivo`, `actualizarObjetivo`, `cambiarEstadoObjetivo`, `listarProgresos`, `crearProgreso`)
-- [ ] T066 [US5] Crear la pantalla `frontend/src/pages/ObjetivosProgreso.jsx` (lista de objetivos con estados y cierre, historial de progreso, alta de ambos, errores y estados vacíos)
-- [ ] T067 [US5] Registrar la ruta y el menú para entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T054 [P] [US5] Crear el modelo `backend/src/models/objetivo.model.js` con `data-model.md` §5 (`meta VARCHAR(255) NOT NULL`, `unidad VARCHAR(30) NULL`, `fecha_objetivo DATE NOT NULL`, `estado ENUM('activo','alcanzado','cerrado')`, `fecha_registro`, `fecha_cierre`)
+- [X] T055 [P] [US5] Crear el modelo `backend/src/models/progreso.model.js` con `data-model.md` §6 (`valor_numerico DECIMAL(8,2) NULL`, `avance VARCHAR(150) NULL`, `comentario VARCHAR(255) NULL`, `fecha DATE NOT NULL`, índices `(id_cliente, fecha)` y `fecha`)
+- [X] T056 [P] [US5] Crear los validadores `backend/src/validators/objetivo.validators.js`: `id_cliente` entero > 0, `meta` no vacía ≤ 255, `unidad` opcional ≤ 30, `fecha_objetivo` fecha válida, `estado` solo `alcanzado|cerrado` en cierre
+- [X] T057 [P] [US5] Crear los validadores `backend/src/validators/progreso.validators.js`: `id_cliente` entero > 0, `fecha` fecha válida, `valor_numerico` ≥ 0 opcional, `avance` ≤ 150 opcional, `comentario` ≤ 255 opcional, y exige al menos uno entre `valor_numerico` y `avance` (FR-020)
+- [X] T058 [US5] Crear el servicio `backend/src/services/objetivo.service.js`: exige asignación vigente con entrenador activo (RN-005/FR-003), transiciones terminales con `fecha_cierre` (data-model §5), sin borrado físico y auditoría (FR-022)
+- [X] T059 [US5] Crear el servicio `backend/src/services/progreso.service.js`: exige asignación vigente con entrenador activo (FR-003), al menos valor o avance, `id_objetivo` existente y del mismo cliente, presentación como seguimiento deportivo nunca diagnóstico médico (RN-013) y auditoría (FR-022)
+- [X] T060 [US5] Crear el controlador `backend/src/controllers/objetivo.controller.js`
+- [X] T061 [US5] Crear el controlador `backend/src/controllers/progreso.controller.js`
+- [X] T062 [P] [US5] Crear las rutas `backend/src/routes/objetivo.routes.js` (`GET /` → `autorizar('entrenador')`; `POST /`, `PUT /:id`, `PATCH /:id/estado` → `autorizar('entrenador')`)
+- [X] T063 [P] [US5] Crear las rutas `backend/src/routes/progreso.routes.js` (`GET /` → `autorizar('entrenador')`; `POST /` → `autorizar('entrenador')`)
+- [X] T064 [US5] Montar `/api/objetivos` y `/api/progresos` en `backend/src/app.js`
+- [X] T065 [P] [US5] Añadir los métodos en `frontend/src/services/api.js` (`listarObjetivos`, `crearObjetivo`, `actualizarObjetivo`, `cambiarEstadoObjetivo`, `listarProgresos`, `crearProgreso`)
+- [X] T066 [US5] Crear la pantalla `frontend/src/pages/ObjetivosProgreso.jsx` (lista de objetivos con estados y cierre, historial de progreso, alta de ambos, errores y estados vacíos)
+- [X] T067 [US5] Registrar la ruta y el menú para entrenador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 5 funcional; el entrenador registra seguimiento completo de sus asignados.
 
