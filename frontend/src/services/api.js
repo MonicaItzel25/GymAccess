@@ -183,4 +183,78 @@ export const api = {
     solicitud(`/membresias/${id}/reactivar`, { method: 'PUT', body: JSON.stringify({}) }),
   cancelarMembresia: (id) =>
     solicitud(`/membresias/${id}/cancelar`, { method: 'PUT', body: JSON.stringify({}) }),
+  // --- Entrenadores (Sprint 3, US-S3-01) ---
+  listarEntrenadores: () => solicitud('/entrenadores'),
+  crearEntrenador: (datos) =>
+    solicitud('/entrenadores', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+  actualizarEntrenador: (id, datos) =>
+    solicitud(`/entrenadores/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(datos),
+    }),
+  cambiarEstadoEntrenador: (id, estado) =>
+    solicitud(`/entrenadores/${id}/estado`, {
+      method: 'PUT',
+      body: JSON.stringify({ estado }),
+    }),
+  // --- Asignaciones de entrenador (Sprint 3, US-S3-02) ---
+  listarAsignaciones: (params = {}) => {
+    const consulta = new URLSearchParams();
+    if (params.entrenador) consulta.set('entrenador', params.entrenador);
+    if (params.vigentes !== undefined) consulta.set('vigentes', params.vigentes);
+    const sufijo = consulta.toString() ? `?${consulta.toString()}` : '';
+    return solicitud(`/asignaciones${sufijo}`);
+  },
+  crearAsignacion: (datos) =>
+    solicitud('/asignaciones', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+  finalizarAsignacion: (id, datos = {}) =>
+    solicitud(`/asignaciones/${id}/finalizar`, {
+      method: 'PUT',
+      body: JSON.stringify(datos),
+    }),
+  // --- Catálogo de ejercicios (Sprint 3, US-S3-08) ---
+  listarEjercicios: (estado = 'activo') =>
+    solicitud(`/ejercicios?estado=${encodeURIComponent(estado)}`),
+  crearEjercicio: (datos) =>
+    solicitud('/ejercicios', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+  actualizarEjercicio: (id, datos) =>
+    solicitud(`/ejercicios/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(datos),
+    }),
+  cambiarEstadoEjercicio: (id, estado) =>
+    solicitud(`/ejercicios/${id}/estado`, {
+      method: 'PUT',
+      body: JSON.stringify({ estado }),
+    }),
+  // --- Rutinas de entrenamiento (Sprint 3, US-S3-03) ---
+  // Para el entrenador, listarRutinas siempre resuelve las SUYAS (el backend
+  // aplica la asignación vigente); `cliente` es un filtro opcional.
+  listarRutinas: (cliente = null) =>
+    solicitud(cliente ? `/rutinas?cliente=${cliente}` : '/rutinas'),
+  obtenerRutina: (id) => solicitud(`/rutinas/${id}`),
+  crearRutina: (datos) =>
+    solicitud('/rutinas', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+  actualizarRutina: (id, datos) =>
+    solicitud(`/rutinas/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(datos),
+    }),
+  cambiarEstadoRutina: (id, estado) =>
+    solicitud(`/rutinas/${id}/estado`, {
+      method: 'PATCH',
+      body: JSON.stringify({ estado }),
+    }),
 };

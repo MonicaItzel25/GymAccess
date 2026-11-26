@@ -13,6 +13,10 @@ import { useAuth } from '../context/AuthContext';
 const OPCIONES = [
   { ruta: '/', texto: 'Inicio', roles: ['administrador', 'recepcionista', 'entrenador', 'cliente'] },
   { ruta: '/usuarios', texto: 'Usuarios', roles: ['administrador'] },
+  { ruta: '/entrenadores', texto: 'Entrenadores', roles: ['administrador'] },
+  { ruta: '/asignaciones', texto: 'Asignaciones', roles: ['administrador', 'recepcionista'] },
+  { ruta: '/ejercicios', texto: 'Ejercicios', roles: ['administrador', 'entrenador'] },
+  { ruta: '/rutinas', texto: 'Mis rutinas', roles: ['entrenador'] },
   { ruta: '/clientes', texto: 'Clientes', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/membresias', texto: 'Membresías', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/tipos-membresia', texto: 'Tipos de membresía', roles: ['administrador'] },
