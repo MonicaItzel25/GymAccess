@@ -3,8 +3,10 @@
 // El entrenador registra y consulta SOLO de clientes con asignación vigente;
 // el backend valida la vigencia y el perfil activo (FR-032, RN-005). Los
 // objetivos activos se pueden editar, marcar como alcanzados o cerrar; el
-// historial de progreso solo admite altas (FR-021). Es seguimiento deportivo,
-// nunca diagnóstico médico (RN-013). ES Modules (JSX).
+// historial de progreso solo admite altas (FR-021). Si el backend deniega el
+// acceso (403: entrenador inactivo o sin asignación), se ocultan formularios e
+// historial. Es seguimiento deportivo, nunca diagnóstico médico (RN-013).
+// ES Modules (JSX).
 
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../services/api';
@@ -29,6 +31,7 @@ export default function ObjetivosProgreso() {
   const [editando, setEditando] = useState(null); // id del objetivo en edición
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
+  const [denegado, setDenegado] = useState(''); // motivo del acceso denegado
   // Cliente visible: descarta respuestas tardías de un cliente anterior.
   const clienteActual = useRef('');
 
@@ -42,6 +45,22 @@ export default function ObjetivosProgreso() {
       });
   }, []);
 
+  /** Un 403 deja la pantalla sin datos ni formularios; otro fallo solo avisa. */
+  function mostrarFallo(e) {
+    if (e.estado !== 403) {
+      setError(e.message);
+      return;
+    }
+    setDenegado(e.message);
+    setError('');
+    setExito('');
+    setObjetivos([]);
+    setProgresos([]);
+    setObjetivo(OBJETIVO_VACIO);
+    setProgreso(PROGRESO_VACIO);
+    setEditando(null);
+  }
+
   async function cargarHistorial(cliente) {
     try {
       const [listaObjetivos, listaProgresos] = await Promise.all([
@@ -52,7 +71,7 @@ export default function ObjetivosProgreso() {
       setObjetivos(listaObjetivos);
       setProgresos(listaProgresos);
     } catch (e) {
-      if (clienteActual.current === cliente) setError(e.message);
+      if (clienteActual.current === cliente) mostrarFallo(e);
     }
   }
 
@@ -69,6 +88,7 @@ export default function ObjetivosProgreso() {
     setObjetivo(OBJETIVO_VACIO);
     setProgreso(PROGRESO_VACIO);
     setEditando(null);
+    setDenegado('');
     limpiarMensajes();
     if (cliente) cargarHistorial(cliente);
   }
@@ -84,7 +104,7 @@ export default function ObjetivosProgreso() {
       setExito(mensaje);
       await cargarHistorial(cliente);
     } catch (e) {
-      if (clienteActual.current === cliente) setError(e.message);
+      if (clienteActual.current === cliente) mostrarFallo(e);
     }
   }
 
@@ -200,9 +220,17 @@ export default function ObjetivosProgreso() {
         )}
       </section>
 
-      {idCliente && (
+      {denegado && (
+        <section className="tarjeta seguimiento">
+          <h2>Seguimiento no disponible</h2>
+          <div className="mensaje mensaje-error" role="alert">{denegado}</div>
+          <p>No se muestran datos de este cliente. Si necesitas acceso, contacta a la administración.</p>
+        </section>
+      )}
+
+      {idCliente && !denegado && (
         <>
-          <section className="tarjeta">
+          <section className="tarjeta seguimiento">
             <h2>{editando ? 'Modificar objetivo' : 'Nuevo objetivo'}</h2>
             <form onSubmit={enviarObjetivo}>
               <div className="fila">
@@ -266,19 +294,19 @@ export default function ObjetivosProgreso() {
                     <tr key={fila.id_objetivo}>
                       <td>{fila.meta}</td>
                       <td>{fila.unidad ?? '—'}</td>
-                      <td>{fila.fecha_objetivo}</td>
+                      <td className="celda-fecha">{fila.fecha_objetivo}</td>
                       <td>{NOMBRE_ESTADO[fila.estado] ?? fila.estado}</td>
                       <td>
                         {fila.estado === 'activo' ? (
-                          <>
-                            <button type="button" onClick={() => prepararEdicion(fila)}>Editar</button>{' '}
+                          <div className="acciones-fila">
+                            <button type="button" onClick={() => prepararEdicion(fila)}>Editar</button>
                             <button type="button" onClick={() => terminarObjetivo(fila, 'alcanzado')}>
                               Alcanzado
-                            </button>{' '}
+                            </button>
                             <button type="button" onClick={() => terminarObjetivo(fila, 'cerrado')}>
                               Cerrar
                             </button>
-                          </>
+                          </div>
                         ) : (
                           '—'
                         )}
@@ -290,7 +318,7 @@ export default function ObjetivosProgreso() {
             </div>
           </section>
 
-          <section className="tarjeta">
+          <section className="tarjeta seguimiento">
             <h2>Nueva entrada de progreso</h2>
             <p>Captura un valor numérico, un avance descrito o ambos.</p>
             <form onSubmit={enviarProgreso}>
@@ -372,7 +400,7 @@ export default function ObjetivosProgreso() {
                   )}
                   {progresos.map((fila) => (
                     <tr key={fila.id_progreso}>
-                      <td>{fila.fecha}</td>
+                      <td className="celda-fecha">{fila.fecha}</td>
                       <td>{nombreObjetivo(fila.id_objetivo)}</td>
                       <td>{fila.valor_numerico ?? '—'}</td>
                       <td>{fila.avance ?? '—'}</td>

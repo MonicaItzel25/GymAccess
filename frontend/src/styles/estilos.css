@@ -173,6 +173,31 @@ button.peligro {
   overflow-x: auto;
 }
 
+/* Objetivos y progreso (US-S3-04). Reglas acotadas a esa pantalla. */
+.seguimiento > h2:first-child {
+  margin-top: 0;
+}
+
+.seguimiento .celda-fecha {
+  white-space: nowrap;
+}
+
+.seguimiento .acciones-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.seguimiento .acciones-fila button {
+  margin-top: 0;
+}
+
+@media (min-width: 769px) {
+  .seguimiento .acciones-fila {
+    flex-wrap: nowrap;
+  }
+}
+
 .fila {
   display: flex;
   gap: 1rem;

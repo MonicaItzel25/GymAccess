@@ -211,6 +211,59 @@ describe('Pantalla de objetivos y progreso', () => {
     expect(screen.queryByLabelText(/cliente/i)).toBeNull();
   });
 
+  const denegacion = (mensaje) => Object.assign(new Error(mensaje), { estado: 403 });
+
+  it('test_entrenador_inactivo_ve_un_unico_estado_sin_formularios_ni_tablas', async () => {
+    const mensaje = 'El entrenador está inactivo; no puede consultar ni registrar el seguimiento';
+    api.listarObjetivos.mockRejectedValue(denegacion(mensaje));
+    api.listarProgresos.mockRejectedValue(denegacion(mensaje));
+    pintar();
+    await seleccionarCliente();
+
+    expect(await screen.findByRole('heading', { name: 'Seguimiento no disponible' })).toBeTruthy();
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
+    expect(screen.getByRole('alert').textContent).toContain('inactivo');
+    expect(screen.queryByLabelText(/meta/i)).toBeNull();
+    expect(screen.queryByRole('button', { name: /registrar/i })).toBeNull();
+    expect(screen.queryByRole('table')).toBeNull();
+    expect(screen.queryByText('Sin objetivos registrados.')).toBeNull();
+  });
+
+  it('test_una_denegacion_al_guardar_oculta_los_datos_y_los_formularios', async () => {
+    api.listarObjetivos.mockResolvedValue([objetivoActivo]);
+    api.crearObjetivo.mockRejectedValue(
+      denegacion('No tienes una asignación vigente con este cliente')
+    );
+    pintar();
+    await seleccionarCliente();
+    expect(await screen.findByRole('cell', { name: 'Correr cinco kilómetros' })).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText(/meta/i), { target: { value: 'Otra meta' } });
+    fireEvent.change(screen.getByLabelText(/fecha objetivo/i), { target: { value: '2026-12-31' } });
+    fireEvent.click(screen.getByRole('button', { name: /registrar objetivo/i }));
+
+    expect(await screen.findByRole('heading', { name: 'Seguimiento no disponible' })).toBeTruthy();
+    expect(screen.queryByText('Correr cinco kilómetros')).toBeNull();
+    expect(screen.queryByRole('button', { name: /registrar/i })).toBeNull();
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('test_un_error_que_no_es_denegacion_conserva_los_formularios', async () => {
+    api.crearObjetivo.mockRejectedValue(
+      Object.assign(new Error('La meta no puede estar vacía'), { estado: 400 })
+    );
+    pintar();
+    await seleccionarCliente();
+
+    fireEvent.change(screen.getByLabelText(/meta/i), { target: { value: 'x' } });
+    fireEvent.change(screen.getByLabelText(/fecha objetivo/i), { target: { value: '2026-12-31' } });
+    fireEvent.click(screen.getByRole('button', { name: /registrar objetivo/i }));
+
+    expect((await screen.findByRole('alert')).textContent).toContain('meta');
+    expect(screen.getByRole('button', { name: /registrar objetivo/i })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Seguimiento no disponible' })).toBeNull();
+  });
+
   it('test_muestra_el_error_del_backend_al_rechazar_el_progreso', async () => {
     api.crearProgreso.mockRejectedValue(new Error('Indica un valor o un avance medido'));
     pintar();
