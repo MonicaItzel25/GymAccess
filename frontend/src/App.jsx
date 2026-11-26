@@ -23,6 +23,7 @@ import Entrenadores from './pages/Entrenadores';
 import Asignaciones from './pages/Asignaciones';
 import Ejercicios from './pages/Ejercicios';
 import Rutinas from './pages/Rutinas';
+import ObjetivosProgreso from './pages/ObjetivosProgreso';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -97,6 +98,15 @@ export default function App() {
           element={
             <RutaRol roles={['entrenador']}>
               <Rutinas />
+            </RutaRol>
+          }
+        />
+        {/* Objetivos y progreso (Sprint 3, US-S3-04): solo entrenador. */}
+        <Route
+          path="/objetivos-progreso"
+          element={
+            <RutaRol roles={['entrenador']}>
+              <ObjetivosProgreso />
             </RutaRol>
           }
         />

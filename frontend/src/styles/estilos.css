@@ -168,6 +168,11 @@ button.peligro {
   color: #616e7c;
 }
 
+/* Tablas anchas: desplazamiento propio en pantallas estrechas (SC-009). */
+.tabla-desplazable {
+  overflow-x: auto;
+}
+
 .fila {
   display: flex;
   gap: 1rem;

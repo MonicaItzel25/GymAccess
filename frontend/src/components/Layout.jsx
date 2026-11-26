@@ -17,6 +17,7 @@ const OPCIONES = [
   { ruta: '/asignaciones', texto: 'Asignaciones', roles: ['administrador', 'recepcionista'] },
   { ruta: '/ejercicios', texto: 'Ejercicios', roles: ['administrador', 'entrenador'] },
   { ruta: '/rutinas', texto: 'Mis rutinas', roles: ['entrenador'] },
+  { ruta: '/objetivos-progreso', texto: 'Objetivos y progreso', roles: ['entrenador'] },
   { ruta: '/clientes', texto: 'Clientes', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/membresias', texto: 'Membresías', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/tipos-membresia', texto: 'Tipos de membresía', roles: ['administrador'] },

@@ -257,4 +257,33 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ estado }),
     }),
+  // --- Objetivos y progreso (Sprint 3, US-S3-04) ---
+  listarObjetivos: (cliente) => solicitud(`/objetivos?cliente=${cliente}`),
+  crearObjetivo: (datos) =>
+    solicitud('/objetivos', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
+  actualizarObjetivo: (id, datos) =>
+    solicitud(`/objetivos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(datos),
+    }),
+  cambiarEstadoObjetivo: (id, estado) =>
+    solicitud(`/objetivos/${id}/estado`, {
+      method: 'PATCH',
+      body: JSON.stringify({ estado }),
+    }),
+  // El historial de progreso solo admite consulta y alta (FR-021).
+  listarProgresos: (cliente, { desde, hasta } = {}) => {
+    const consulta = new URLSearchParams({ cliente });
+    if (desde) consulta.set('desde', desde);
+    if (hasta) consulta.set('hasta', hasta);
+    return solicitud(`/progresos?${consulta.toString()}`);
+  },
+  crearProgreso: (datos) =>
+    solicitud('/progresos', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    }),
 };
