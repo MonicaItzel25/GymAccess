@@ -110,19 +110,46 @@ Contratos REST/JSON de los endpoints nuevos y del endpoint existente ampliado. P
 
 | Método y ruta | Roles permitidos | Descripción |
 |---|---|---|
-| `GET /api/objetivos?cliente=:id` | `entrenador` | Objetivos de sus clientes asignados vigentes (RN-005); `403` si el cliente no está asignado |
+| `GET /api/objetivos?cliente=:id` | `entrenador` | Historial de objetivos de un cliente asignado vigente (RN-005), ordenado por fecha de registro ascendente |
 | `POST /api/objetivos` | `entrenador` | Registra un objetivo (FR-019) |
-| `PUT /api/objetivos/:id` | `entrenador` | Modifica `meta`, `unidad`, `fecha_objetivo` si `estado = 'activo'` (400 si está cerrado) |
+| `PUT /api/objetivos/:id` | `entrenador` | Modifica parcialmente `meta`, `unidad`, `fecha_objetivo` de un objetivo `activo` |
 | `PATCH /api/objetivos/:id/estado` | `entrenador` | Cierra o marca alcanzado: `{ "estado": "alcanzado" \| "cerrado" }` (rellena `fecha_cierre`) |
+
+**Reglas comunes** (también para `/api/progresos`)
+
+- El entrenador necesita perfil `activo` y asignación vigente con el cliente, tanto para consultar como para escribir (403). Un entrenador sin perfil o inactivo no consulta información (FR-003).
+- Un dato con formato inválido responde 400 antes de aplicar las reglas de negocio.
+- En las operaciones sobre `/:id`, `id` es un entero > 0 (400); un objetivo inexistente responde 404 y uno de un cliente no asignado, 403.
+- Las fechas usan el formato `YYYY-MM-DD` y deben existir en el calendario. Se admiten fechas pasadas y futuras.
+- Los textos se recortan antes de validarse.
+
+**`GET /api/objetivos`**
+
+- `cliente` es obligatorio y entero > 0 (400).
+- `200` → `data: [ { id_objetivo, id_cliente, meta, unidad, fecha_objetivo, estado, fecha_registro, fecha_cierre } ]`; sin registros → `data: []`.
 
 **`POST /api/objetivos`**
 
 - Cuerpo: `{ "id_cliente": 5, "meta": "Bajar a 85 kg", "unidad": "kg", "fecha_objetivo": "2026-12-31" }` (`unidad` opcional).
-- Validaciones: asignación vigente (403); `meta` no vacía (400); `fecha_objetivo` válida (400).
-- `201` → `data: { id_objetivo, id_cliente, meta, unidad, fecha_objetivo, estado: "activo", fecha_registro }`.
-- Auditoría: `accion = 'crear objetivo'`, `modulo = 'objetivos'` (FR-022).
+- Validaciones: `id_cliente` entero > 0 (400); `meta` no vacía, ≤ 255 (400); `unidad` ≤ 30, y vacía o `null` equivale a sin unidad (400 si excede); `fecha_objetivo` obligatoria y válida (400); asignación vigente (403).
+- `201` → `data: { id_objetivo, id_cliente, meta, unidad, fecha_objetivo, estado: "activo", fecha_registro, fecha_cierre: null }`.
+- Auditoría: `accion = 'crear objetivo'` (FR-022).
 
-**Denegaciones**: `recepcionista` y `cliente` → 403 (US-S3-04.5); `administrador` → 403 en detalle individual (Clarification Q4: solo agregados).
+**`PUT /api/objetivos/:id`**
+
+- Cuerpo parcial: los campos no enviados se conservan. `unidad: null` (o vacía) quita la unidad; `meta` y `fecha_objetivo` no admiten `null` ni vacío (400).
+- Un cuerpo sin ninguno de los tres campos → 400. Los demás campos se ignoran.
+- Un objetivo `alcanzado` o `cerrado` → 400.
+- `200` → `data` con el objetivo actualizado.
+- Auditoría: `accion = 'modificar objetivo'` (FR-022).
+
+**`PATCH /api/objetivos/:id/estado`**
+
+- `estado` obligatorio: `alcanzado` o `cerrado` (400). Ambos son terminales: un objetivo que ya no está `activo` → 400.
+- `200` → `data` con el nuevo `estado` y `fecha_cierre`.
+- Auditoría: `accion = 'cambiar estado objetivo'` (FR-022).
+
+**Denegaciones**: `recepcionista` y `cliente` → 403 (US-S3-04.5); `administrador` → 403 en detalle individual (Clarification Q4: solo agregados). No existe `DELETE` (FR-021).
 
 ## 6. Progresos — `/api/progresos`
 
@@ -131,13 +158,54 @@ Contratos REST/JSON de los endpoints nuevos y del endpoint existente ampliado. P
 | `GET /api/progresos?cliente=:id&desde=&hasta=` | `entrenador` | Entradas de sus clientes asignados vigentes, ordenadas por fecha ascendente |
 | `POST /api/progresos` | `entrenador` | Registra una entrada (FR-020) |
 
+Se aplican las reglas comunes de la sección 5.
+
+**`GET /api/progresos`**
+
+- `cliente` es obligatorio y entero > 0 (400).
+- `desde` y `hasta` son opcionales (vacíos equivalen a omitirlos), inclusivos y con fecha válida (400).
+- `desde` posterior a `hasta` → 400: «El periodo de fechas es inválido».
+- `200` → `data: [ { id_progreso, id_cliente, id_objetivo, fecha, valor_numerico, avance, comentario, fecha_registro } ]`, por `fecha` ascendente; sin registros → `data: []`.
+
 **`POST /api/progresos`**
 
-- Cuerpo: `{ "id_cliente": 5, "id_objetivo": 2, "fecha": "2026-10-19", "valor_numerico": 87.4, "avance": null, "comentario": "Buena sesión" }` (`id_objetivo` y `comentario` opcionales).
-- Validaciones: asignación vigente (403); al menos uno entre `valor_numerico` y `avance` (400: «Indica un valor o un avance medido»); si `id_objetivo` se envía, existe (404) y pertenece al mismo cliente (400); `valor_numerico` ≥ 0 (400).
+- Cuerpo: `{ "id_cliente": 5, "id_objetivo": 2, "fecha": "2026-10-19", "valor_numerico": 87.4, "avance": null, "comentario": "Buena sesión" }`. `id_cliente` y `fecha` son obligatorios; `id_objetivo` y `comentario`, opcionales.
+- Validaciones: `id_cliente` e `id_objetivo` enteros > 0 (400); `valor_numerico` entre 0 y 999999.99 (400); `avance` ≤ 150 y `comentario` ≤ 255, vacíos equivalen a `null` (400 si exceden); asignación vigente (403); al menos uno entre `valor_numerico` y `avance`, siendo `0` un valor válido (400: «Indica un valor o un avance medido»).
+- Si se envía `id_objetivo`: existe (404), pertenece al mismo cliente (400) y está `activo`; no se admiten progresos nuevos sobre objetivos `alcanzado` o `cerrado` (400).
 - `201` → `data: { id_progreso, id_cliente, id_objetivo, fecha, valor_numerico, avance, comentario, fecha_registro }`.
-- Auditoría: `accion = 'registrar progreso'`, `modulo = 'progresos'` (FR-022).
-- **Denegaciones**: `recepcionista` y `cliente` → 403 (US-S3-04.5). Las entradas no se borran ni se sobrescriben (FR-021).
+- Auditoría: `accion = 'registrar progreso'` (FR-022).
+
+**Correcciones** (FR-021, FR-022)
+
+- Las entradas no se editan ni se borran: no existen `PUT`, `PATCH` ni `DELETE` en este recurso.
+- Comportamiento actual de `id_progreso_corregido`: ausente o `null` se acepta; un valor que no sea entero > 0 → 400; **cualquier entero > 0 también se rechaza con 400** y no se registra ninguna entrada, porque la referencia todavía no puede guardarse. No se comprueba si la entrada referenciada existe.
+- **Ampliación pendiente**: `id_progreso_corregido` será un campo opcional de una entrada **nueva** que referencie a la original, conservada sin cambios, y la operación quedará en auditoría. Requiere un cambio de esquema aún no definido en `data-model.md` ni autorizado como migración.
+
+**Denegaciones**: `recepcionista`, `cliente` y `administrador` → 403 (US-S3-04.5, Clarification Q4).
+
+### Auditoría de objetivos y progresos
+
+| Operación | `modulo` | `accion` |
+|---|---|---|
+| Registrar objetivo | `objetivos` | `crear objetivo` |
+| Modificar objetivo | `objetivos` | `modificar objetivo` |
+| Alcanzar o cerrar objetivo | `objetivos` | `cambiar estado objetivo` |
+| Registrar progreso | `progresos` | `registrar progreso` |
+
+- Éxito → `resultado = 'exitoso'`. Un rechazo por permisos del entrenador o por reglas de negocio (400, 403 o 404 resueltos por el servicio, incluido el `PUT` vacío) → la misma `accion` con `resultado = 'rechazado'`.
+- No se auditan las consultas, las peticiones sin sesión (401), los roles denegados en la ruta (403), los datos rechazados por el validador (400) ni los errores técnicos.
+- `descripcion` identifica el recurso afectado y no copia la meta, el avance ni el comentario.
+- Un fallo al escribir la auditoría no interrumpe la operación principal.
+
+### Limitaciones de concurrencia aceptadas
+
+En esta etapa no se usan bloqueos ni transacciones:
+
+- Dos ediciones simultáneas del mismo objetivo pueden pisarse, porque los campos no enviados se completan con la última lectura.
+- Una asignación puede finalizar entre su comprobación y la escritura, que igualmente se realiza.
+- Un objetivo puede cerrarse entre su comprobación y el alta de un progreso, que queda registrado.
+
+El cierre simultáneo de un mismo objetivo sí está protegido: solo cambia de estado una fila `activo`.
 
 ## 7. Mi entrenamiento (cliente) — `/api/mi-entrenamiento`
 

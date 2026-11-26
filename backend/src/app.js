@@ -20,6 +20,8 @@ import entrenadorRoutes from './routes/entrenador.routes.js';
 import asignacionRoutes from './routes/asignacion.routes.js';
 import ejercicioRoutes from './routes/ejercicio.routes.js';
 import rutinaRoutes from './routes/rutina.routes.js';
+import objetivoRoutes from './routes/objetivo.routes.js';
+import progresoRoutes from './routes/progreso.routes.js';
 
 export function crearApp() {
   const app = express();
@@ -57,6 +59,10 @@ export function crearApp() {
   app.use('/api/ejercicios', ejercicioRoutes);
   // Rutinas de entrenamiento (Sprint 3, US-S3-03).
   app.use('/api/rutinas', rutinaRoutes);
+  // Objetivos de entrenamiento (Sprint 3, US-S3-04).
+  app.use('/api/objetivos', objetivoRoutes);
+  // Progreso de los clientes (Sprint 3, US-S3-04).
+  app.use('/api/progresos', progresoRoutes);
 
   // Respuesta para rutas desconocidas (antes del manejador de errores).
   app.use((req, res) => {
