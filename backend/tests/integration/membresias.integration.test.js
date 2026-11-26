@@ -12,7 +12,7 @@ import {
   insertarCliente,
   cerrarPool,
 } from '../helpers/baseDatos.js';
-import { aFechaLocal } from '../../src/utils/fechas.js';
+import { aFechaLocal, hoy } from '../../src/utils/fechas.js';
 
 const app = crearApp();
 
@@ -66,26 +66,35 @@ describe('Integración de asignación de membresías', () => {
 
   it('deja una sola membresía vigente por cliente (FR-025)', async () => {
     const idTipo = await crearTipoPrueba({ duracion: 60 });
+    // Fechas relativas a hoy para que la prueba no caduque con el calendario.
+    const inicioPrimera = hoy();
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    const inicioSegunda = aFechaLocal(manana);
+
     // Primera membresía vigente
     const primera = await request(app)
       .post('/api/membresias')
       .set('Authorization', `Bearer ${tokenRecep}`)
-      .send({ id_cliente: idCliente, id_tipo_membresia: idTipo, fecha_inicio: '2026-11-01' });
+      .send({ id_cliente: idCliente, id_tipo_membresia: idTipo, fecha_inicio: inicioPrimera });
     expect(primera.status).toBe(201);
 
     // Segunda membresía: debe cerrar la anterior
     const segunda = await request(app)
       .post('/api/membresias')
       .set('Authorization', `Bearer ${tokenRecep}`)
-      .send({ id_cliente: idCliente, id_tipo_membresia: idTipo, fecha_inicio: '2026-12-01' });
+      .send({ id_cliente: idCliente, id_tipo_membresia: idTipo, fecha_inicio: inicioSegunda });
     expect(segunda.status).toBe(201);
 
+    // Vigente = estado `activa` y sin vencer (FR-010): una membresía ya vencida
+    // por fecha no cuenta, aunque conserve ese estado.
     const vigentes = await consultar(
-      "SELECT * FROM membresias WHERE id_cliente = ? AND estado = 'activa'",
+      `SELECT * FROM membresias
+       WHERE id_cliente = ? AND estado = 'activa' AND fecha_fin >= CURDATE()`,
       [idCliente]
     );
     expect(vigentes).toHaveLength(1);
-    expect(aFechaLocal(vigentes[0].fecha_inicio)).toBe('2026-12-01');
+    expect(aFechaLocal(vigentes[0].fecha_inicio)).toBe(inicioSegunda);
 
     // La primera sigue existiendo pero ya no está activa
     const primeraGuardada = await consultar('SELECT * FROM membresias WHERE id_membresia = ?', [
