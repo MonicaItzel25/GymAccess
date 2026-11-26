@@ -5,6 +5,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.js'],
+    // Detiene las pruebas si el destino no es `gym_db_pruebas` en local.
+    setupFiles: ['./tests/setup/protegerBase.js'],
     hookTimeout: 30000,
     testTimeout: 30000,
     // Las suites comparten una única base de datos MySQL local y algunas usan

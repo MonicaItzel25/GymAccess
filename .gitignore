@@ -42,3 +42,6 @@ Thumbs.db
 # y no se versionan binarios de ~6 MB en el repositorio.
 frontend/public/modelos/*
 !frontend/public/modelos/LEEME.md
+
+# Script auxiliar local de pruebas
+backend/crear-admin-pruebas.mjs

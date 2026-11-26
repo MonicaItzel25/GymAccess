@@ -19,6 +19,11 @@ import Pagos from './pages/Pagos';
 import MisPagos from './pages/MisPagos';
 import Accesos from './pages/Accesos';
 import MisAccesos from './pages/MisAccesos';
+import Entrenadores from './pages/Entrenadores';
+import Asignaciones from './pages/Asignaciones';
+import Ejercicios from './pages/Ejercicios';
+import Rutinas from './pages/Rutinas';
+import ObjetivosProgreso from './pages/ObjetivosProgreso';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -56,6 +61,52 @@ export default function App() {
           element={
             <RutaRol roles={['administrador']}>
               <Usuarios />
+            </RutaRol>
+          }
+        />
+        {/* Perfiles de entrenador (Sprint 3, US-S3-01): solo administrador. */}
+        <Route
+          path="/entrenadores"
+          element={
+            <RutaRol roles={['administrador']}>
+              <Entrenadores />
+            </RutaRol>
+          }
+        />
+        {/* Asignaciones entrenador–cliente (Sprint 3, US-S3-02). */}
+        <Route
+          path="/asignaciones"
+          element={
+            <RutaRol roles={['administrador', 'recepcionista']}>
+              <Asignaciones />
+            </RutaRol>
+          }
+        />
+        {/* Catálogo de ejercicios (Sprint 3, US-S3-08):
+            administrador escribe, entrenador solo consulta (FR-012). */}
+        <Route
+          path="/ejercicios"
+          element={
+            <RutaRol roles={['administrador', 'entrenador']}>
+              <Ejercicios />
+            </RutaRol>
+          }
+        />
+        {/* Rutinas de entrenamiento (Sprint 3, US-S3-03): solo entrenador. */}
+        <Route
+          path="/rutinas"
+          element={
+            <RutaRol roles={['entrenador']}>
+              <Rutinas />
+            </RutaRol>
+          }
+        />
+        {/* Objetivos y progreso (Sprint 3, US-S3-04): solo entrenador. */}
+        <Route
+          path="/objetivos-progreso"
+          element={
+            <RutaRol roles={['entrenador']}>
+              <ObjetivosProgreso />
             </RutaRol>
           }
         />

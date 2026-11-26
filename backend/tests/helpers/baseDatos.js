@@ -36,7 +36,15 @@ export async function obtenerHashPrueba() {
 export async function vaciarTablas() {
   verificarBasePruebas();
   const pool = obtenerPool();
-  // Tablas del Sprint 2 primero (dependen de usuarios y clientes).
+  // Tablas del Sprint 3 primero (dependen de usuarios, clientes y entrenadores).
+  await pool.execute('DELETE FROM progresos');
+  await pool.execute('DELETE FROM ejercicio_rutina');
+  await pool.execute('DELETE FROM rutinas');
+  await pool.execute('DELETE FROM objetivos');
+  await pool.execute('DELETE FROM asignaciones_entrenador');
+  await pool.execute('DELETE FROM entrenadores');
+  await pool.execute('DELETE FROM ejercicios');
+  // Tablas del Sprint 2 (dependen de usuarios y clientes).
   await pool.execute('DELETE FROM auditoria');
   await pool.execute('DELETE FROM accesos');
   await pool.execute('DELETE FROM rostros');

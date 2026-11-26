@@ -16,6 +16,12 @@ import auditoriaRoutes from './routes/auditoria.routes.js';
 import tipoMembresiaRoutes from './routes/tipoMembresia.routes.js';
 import pagoRoutes from './routes/pago.routes.js';
 import adeudoRoutes from './routes/adeudo.routes.js';
+import entrenadorRoutes from './routes/entrenador.routes.js';
+import asignacionRoutes from './routes/asignacion.routes.js';
+import ejercicioRoutes from './routes/ejercicio.routes.js';
+import rutinaRoutes from './routes/rutina.routes.js';
+import objetivoRoutes from './routes/objetivo.routes.js';
+import progresoRoutes from './routes/progreso.routes.js';
 
 export function crearApp() {
   const app = express();
@@ -45,6 +51,18 @@ export function crearApp() {
   app.use('/api/accesos', accesoConsultaRoutes);
   // Auditoría (Sprint 2, FR-038): solo administrador.
   app.use('/api/auditoria', auditoriaRoutes);
+  // Perfiles de entrenador (Sprint 3, US-S3-01).
+  app.use('/api/entrenadores', entrenadorRoutes);
+  // Asignaciones entrenador–cliente (Sprint 3, US-S3-02).
+  app.use('/api/asignaciones', asignacionRoutes);
+  // Catálogo de ejercicios (Sprint 3, US-S3-08).
+  app.use('/api/ejercicios', ejercicioRoutes);
+  // Rutinas de entrenamiento (Sprint 3, US-S3-03).
+  app.use('/api/rutinas', rutinaRoutes);
+  // Objetivos de entrenamiento (Sprint 3, US-S3-04).
+  app.use('/api/objetivos', objetivoRoutes);
+  // Progreso de los clientes (Sprint 3, US-S3-04).
+  app.use('/api/progresos', progresoRoutes);
 
   // Respuesta para rutas desconocidas (antes del manejador de errores).
   app.use((req, res) => {

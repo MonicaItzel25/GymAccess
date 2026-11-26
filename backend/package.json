@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend del Sistema de Gestión para Gimnasio - Sprint 2",
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
