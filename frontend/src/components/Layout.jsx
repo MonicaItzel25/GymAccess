@@ -17,6 +17,7 @@ const OPCIONES = [
   { ruta: '/', texto: 'Inicio', roles: ['administrador', 'recepcionista', 'entrenador', 'cliente'] },
   { ruta: '/dashboard', texto: 'Dashboard', roles: ['administrador'] },
   { ruta: '/usuarios', texto: 'Usuarios', roles: ['administrador'] },
+  { ruta: '/auditoria', texto: 'Auditoría', roles: ['administrador'] },
   { ruta: '/entrenadores', texto: 'Entrenadores', roles: ['administrador'] },
   { ruta: '/asignaciones', texto: 'Asignaciones', roles: ['administrador', 'recepcionista'] },
   { ruta: '/personal-asignado', texto: 'Personal asignado', roles: ['administrador', 'recepcionista'] },

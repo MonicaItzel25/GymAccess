@@ -1,6 +1,7 @@
 // controllers/auditoria.controller.js
 // Endpoint de consulta de auditoría (FR-038). Solo administrador.
-// Filtros: ?desde=, ?hasta= (fecha o fecha y hora) y ?modulo=.
+// Filtros: ?desde=, ?hasta= (fecha o fecha y hora), ?modulo= y ?actor=
+// (identificador o parte del nombre), validados en las rutas.
 // No existe endpoint de eliminación (FR-038). ES Modules.
 
 import * as servicio from '../services/auditoria.service.js';
@@ -27,6 +28,7 @@ export const listar = envolverControlador(async (req, res) => {
     desde: normalizarFecha(req.query.desde, 'inicio'),
     hasta: normalizarFecha(req.query.hasta, 'fin'),
     modulo: req.query.modulo || null,
+    actor: req.query.actor?.trim() || null,
   });
   return enviarOk(res, registros);
 });

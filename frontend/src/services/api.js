@@ -290,6 +290,15 @@ export const api = {
   obtenerMiRutina: () => solicitud('/mi-entrenamiento/rutina'),
   obtenerMisObjetivos: () => solicitud('/mi-entrenamiento/objetivos'),
   obtenerMisProgresos: () => solicitud('/mi-entrenamiento/progresos'),
+  // --- Auditoría (Sprint 3, US-S3-09): solo consulta ---
+  obtenerAuditoria: (filtros = {}) => {
+    const consulta = new URLSearchParams();
+    for (const nombre of ['desde', 'hasta', 'modulo', 'actor']) {
+      if (filtros[nombre]) consulta.set(nombre, filtros[nombre]);
+    }
+    const sufijo = consulta.toString() ? `?${consulta.toString()}` : '';
+    return solicitud(`/auditoria${sufijo}`);
+  },
   // --- Dashboard administrativo (Sprint 3, US-S3-06) ---
   obtenerDashboard: ({ desde, hasta } = {}) => {
     const consulta = new URLSearchParams();

@@ -28,6 +28,7 @@ import MiRutina from './pages/MiRutina';
 import MiProgreso from './pages/MiProgreso';
 import Dashboard from './pages/Dashboard';
 import PersonalAsignado from './pages/PersonalAsignado';
+import Auditoria from './pages/Auditoria';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -201,6 +202,15 @@ export default function App() {
           element={
             <RutaRol roles={['administrador']}>
               <Dashboard />
+            </RutaRol>
+          }
+        />
+        {/* Auditoría de solo lectura (Sprint 3, US-S3-09): solo administrador. */}
+        <Route
+          path="/auditoria"
+          element={
+            <RutaRol roles={['administrador']}>
+              <Auditoria />
             </RutaRol>
           }
         />

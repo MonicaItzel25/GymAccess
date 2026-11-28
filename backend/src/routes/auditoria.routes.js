@@ -5,6 +5,8 @@
 import { Router } from 'express';
 import { autenticar } from '../middlewares/auth.js';
 import { autorizar } from '../middlewares/authorize.js';
+import { validar } from '../validators/validar.js';
+import { reglasConsultarAuditoria } from '../validators/auditoria.validators.js';
 import { listar } from '../controllers/auditoria.controller.js';
 
 const router = Router();
@@ -12,6 +14,6 @@ const router = Router();
 router.use(autenticar);
 
 // Consulta global de auditoría: exclusiva del administrador.
-router.get('/', autorizar('administrador'), listar);
+router.get('/', autorizar('administrador'), reglasConsultarAuditoria, validar, listar);
 
 export default router;

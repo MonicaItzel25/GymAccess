@@ -274,20 +274,22 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T091 [P] [US8] Prueba de contrato en `backend/tests/contract/auditoria-filtros.contract.test.js`: `GET /api/auditoria` con `desde`/`hasta`/`modulo`/`actor` acota la lista (US-S3-09.2), `desde > hasta` 400, 403 para recepcionista/entrenador/cliente (US-S3-09.4), y `POST`/`PUT`/`DELETE` sobre `/api/auditoria` responden 404 (no existen operaciones de escritura, FR-031/SC-007)
-- [ ] T092 [P] [US8] Prueba de integración en `backend/tests/integration/auditoria-filtros.integration.test.js`: sin parámetros conserva el comportamiento previo del Sprint 2 (compatibilidad) y la respuesta incluye actor, acción, entidad (mapeada a `modulo` + detalle en `descripcion`, contrato §9), fecha/hora y resultado (US-S3-09.1)
-- [ ] T093 [P] [US8] Prueba frontend en `frontend/src/pages/Auditoria.test.jsx`: registros visibles, aplicar filtros, estado vacío sin resultados y **cero botones/controles de edición, creación o borrado** (SC-007)
+- [X] T091 [P] [US8] Prueba de contrato en `backend/tests/contract/auditoria-filtros.contract.test.js`: `GET /api/auditoria` con `desde`/`hasta`/`modulo`/`actor` acota la lista (US-S3-09.2), `desde > hasta` 400, 403 para recepcionista/entrenador/cliente (US-S3-09.4), y `POST`/`PUT`/`DELETE` sobre `/api/auditoria` responden 404 (no existen operaciones de escritura, FR-031/SC-007)
+- [X] T092 [P] [US8] Prueba de integración en `backend/tests/integration/auditoria-filtros.integration.test.js`: sin parámetros conserva el comportamiento previo del Sprint 2 (compatibilidad) y la respuesta incluye actor, acción, entidad (mapeada a `modulo` + detalle en `descripcion`, contrato §9), fecha/hora y resultado (US-S3-09.1)
+- [X] T093 [P] [US8] Prueba frontend en `frontend/src/pages/Auditoria.test.jsx`: registros visibles, aplicar filtros, estado vacío sin resultados y **cero botones/controles de edición, creación o borrado** (SC-007)
 
 ### Implementación para la Historia 8
 
-- [ ] T094 [US8] Ampliar `backend/src/models/auditoria.model.js` con el listado filtrado opcional por `desde`, `hasta`, `modulo` y `actor` (research R-06), conservando la consulta existente sin parámetros
-- [ ] T095 [US8] Ampliar `backend/src/controllers/auditoria.controller.js` para leer y validar los filtros de `contracts/api.md` §9 sin alterar la respuesta actual cuando no se envían
-- [ ] T096 [US8] Crear `backend/src/validators/auditoria.validators.js` (`desde`/`hasta` fechas válidas y `desde <= hasta`) y aplicarlo en `backend/src/routes/auditoria.routes.js` sin añadir ningún método de escritura
-- [ ] T097 [P] [US8] Ampliar el método de auditoría en `frontend/src/services/api.js` (`obtenerAuditoria` con filtros `desde`, `hasta`, `modulo`, `actor`)
-- [ ] T098 [US8] Crear la pantalla `frontend/src/pages/Auditoria.jsx` (tabla de solo lectura con actor/acción/entidad/fecha/resultado, filtros, estado vacío; sin controles de edición, creación ni borrado)
-- [ ] T099 [US8] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T094 [US8] Ampliar `backend/src/models/auditoria.model.js` con el listado filtrado opcional por `desde`, `hasta`, `modulo` y `actor` (research R-06), conservando la consulta existente sin parámetros
+- [X] T095 [US8] Ampliar `backend/src/controllers/auditoria.controller.js` para leer y validar los filtros de `contracts/api.md` §9 sin alterar la respuesta actual cuando no se envían
+- [X] T096 [US8] Crear `backend/src/validators/auditoria.validators.js` (`desde`/`hasta` fechas válidas y `desde <= hasta`) y aplicarlo en `backend/src/routes/auditoria.routes.js` sin añadir ningún método de escritura
+- [X] T097 [P] [US8] Ampliar el método de auditoría en `frontend/src/services/api.js` (`obtenerAuditoria` con filtros `desde`, `hasta`, `modulo`, `actor`)
+- [X] T098 [US8] Crear la pantalla `frontend/src/pages/Auditoria.jsx` (tabla de solo lectura con actor/acción/entidad/fecha/resultado, filtros, estado vacío; sin controles de edición, creación ni borrado)
+- [X] T099 [US8] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 8 funcional; la auditoría es consultable con filtros y sigue siendo inmutable.
+
+**Registro (2026-11-28)**: T091–T099 implementadas y verificadas con pruebas automáticas (backend 399/399, frontend 117/117, build correcto). Las pruebas del backend fallaron antes de implementar. Se conserva `id_usuario` en la respuesta y se añade `actor`; los filtros con formato no válido ahora responden 400. La consulta no tiene paginación. Pendiente: recorrido manual en navegador (T109).
 
 ---
 
