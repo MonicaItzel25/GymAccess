@@ -286,4 +286,8 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(datos),
     }),
+  // --- Mi entrenamiento del cliente (Sprint 3, US-S3-05): solo consulta ---
+  obtenerMiRutina: () => solicitud('/mi-entrenamiento/rutina'),
+  obtenerMisObjetivos: () => solicitud('/mi-entrenamiento/objetivos'),
+  obtenerMisProgresos: () => solicitud('/mi-entrenamiento/progresos'),
 };

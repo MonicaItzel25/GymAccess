@@ -211,24 +211,26 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T068 [P] [US6] Prueba de contrato en `backend/tests/contract/mi-entrenamiento.contract.test.js`: `GET /api/mi-entrenamiento/rutina` 200 con datos propios, `data: null` sin rutina activa sin error (FR-024), `objetivos`/`progresos` propios, 403 para otros roles, 404 sin ficha vinculada, y rechazo de cualquier intento de consultar a un tercero (parámetro de identificación de cliente → 403, US-S3-05.4)
-- [ ] T069 [P] [US6] Prueba de integración en `backend/tests/integration/mi-entrenamiento.integration.test.js`: la rutina que ve el cliente es exactamente la `activa` (Q5) y su historial de progresos llega ordenado en el tiempo (US-S3-05.2)
-- [ ] T070 [P] [US6] Prueba frontend en `frontend/src/pages/MiRutina.test.jsx`: rutina activa con ejercicios y estado vacío cuando no existe
-- [ ] T071 [P] [US6] Prueba frontend en `frontend/src/pages/MiProgreso.test.jsx`: evolución ordenada y estado vacío sin objetivos
+- [X] T068 [P] [US6] Prueba de contrato en `backend/tests/contract/mi-entrenamiento.contract.test.js`: `GET /api/mi-entrenamiento/rutina` 200 con datos propios, `data: null` sin rutina activa sin error (FR-024), `objetivos`/`progresos` propios, 403 para otros roles, 404 sin ficha vinculada, y rechazo de cualquier intento de consultar a un tercero (parámetro de identificación de cliente → 403, US-S3-05.4)
+- [X] T069 [P] [US6] Prueba de integración en `backend/tests/integration/mi-entrenamiento.integration.test.js`: la rutina que ve el cliente es exactamente la `activa` (Q5) y su historial de progresos llega ordenado en el tiempo (US-S3-05.2)
+- [X] T070 [P] [US6] Prueba frontend en `frontend/src/pages/MiRutina.test.jsx`: rutina activa con ejercicios y estado vacío cuando no existe
+- [X] T071 [P] [US6] Prueba frontend en `frontend/src/pages/MiProgreso.test.jsx`: evolución ordenada y estado vacío sin objetivos
 
 ### Implementación para la Historia 6
 
-- [ ] T072 [US6] Añadir a `backend/src/models/rutina.model.js` la consulta de la rutina `activa` del cliente resuelta por el `correo` de la sesión (patrón `obtenerPorCorreo` de `backend/src/controllers/cliente.controller.js`)
-- [ ] T073 [P] [US6] Añadir a `backend/src/models/objetivo.model.js` y `backend/src/models/progreso.model.js` las consultas de historial propias por `correo` de la sesión, ordenadas por fecha ascendente
-- [ ] T074 [US6] Crear el servicio `backend/src/services/miEntrenamiento.service.js`: resuelve la ficha por `correo` (vínculo cuenta↔ficha del supuesto del spec), devuelve estados vacíos (`null`/`[]`) en lugar de errores (FR-024) y nunca acepta identificadores de terceros
-- [ ] T075 [US6] Crear el controlador `backend/src/controllers/miEntrenamiento.controller.js`
-- [ ] T076 [US6] Crear las rutas `backend/src/routes/miEntrenamiento.routes.js` (`GET /rutina`, `GET /objetivos`, `GET /progresos` → `autorizar('cliente')`) y montarlas en `backend/src/app.js` bajo `/api/mi-entrenamiento`
-- [ ] T077 [P] [US6] Añadir los métodos en `frontend/src/services/api.js` (`obtenerMiRutina`, `obtenerMisObjetivos`, `obtenerMisProgresos`)
-- [ ] T078 [US6] Crear la pantalla `frontend/src/pages/MiRutina.jsx` (ejercicios con series, repeticiones, peso recomendado, descanso e instrucciones; estado vacío comprensible)
-- [ ] T079 [P] [US6] Crear la pantalla `frontend/src/pages/MiProgreso.jsx` (objetivos e historial de progresos ordenado en el tiempo; estados vacíos)
-- [ ] T080 [US6] Registrar las rutas y el menú para cliente en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T072 [US6] Añadir a `backend/src/models/rutina.model.js` la consulta de la rutina `activa` del cliente resuelta por el `correo` de la sesión (patrón `obtenerPorCorreo` de `backend/src/controllers/cliente.controller.js`)
+- [X] T073 [P] [US6] Añadir a `backend/src/models/objetivo.model.js` y `backend/src/models/progreso.model.js` las consultas de historial propias por `correo` de la sesión, ordenadas por fecha ascendente
+- [X] T074 [US6] Crear el servicio `backend/src/services/miEntrenamiento.service.js`: resuelve la ficha por `correo` (vínculo cuenta↔ficha del supuesto del spec), devuelve estados vacíos (`null`/`[]`) en lugar de errores (FR-024) y nunca acepta identificadores de terceros
+- [X] T075 [US6] Crear el controlador `backend/src/controllers/miEntrenamiento.controller.js`
+- [X] T076 [US6] Crear las rutas `backend/src/routes/miEntrenamiento.routes.js` (`GET /rutina`, `GET /objetivos`, `GET /progresos` → `autorizar('cliente')`) y montarlas en `backend/src/app.js` bajo `/api/mi-entrenamiento`
+- [X] T077 [P] [US6] Añadir los métodos en `frontend/src/services/api.js` (`obtenerMiRutina`, `obtenerMisObjetivos`, `obtenerMisProgresos`)
+- [X] T078 [US6] Crear la pantalla `frontend/src/pages/MiRutina.jsx` (ejercicios con series, repeticiones, peso recomendado, descanso e instrucciones; estado vacío comprensible)
+- [X] T079 [P] [US6] Crear la pantalla `frontend/src/pages/MiProgreso.jsx` (objetivos e historial de progresos ordenado en el tiempo; estados vacíos)
+- [X] T080 [US6] Registrar las rutas y el menú para cliente en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 6 funcional; el cliente consulta de forma aislada e independiente del resto de roles.
+
+**Registro (2026-11-28)**: T068–T080 implementadas y verificadas con pruebas automáticas (backend 343/343, frontend 78/78, build correcto). Las pruebas del backend se ejecutaron antes de implementar y fallaron como se esperaba; las del frontend se escribieron antes que las pantallas, pero no se ejecutaron en rojo. En T073 se reutilizaron las consultas de historial existentes, ya ordenadas por fecha, con la ficha resuelta por el correo de la sesión. Pendiente: recorrido manual en navegador (T109).
 
 ---
 

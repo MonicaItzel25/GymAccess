@@ -170,3 +170,13 @@ export async function revertirTransaccion(conexion) {
   await conexion.rollback();
   conexion.release();
 }
+
+/** Devuelve la rutina `activa` del cliente con sus ejercicios, o null
+ *  (US-S3-05; hay como máximo una por cliente, Clarification Q5). */
+export async function obtenerActivaPorCliente(idCliente) {
+  const filas = await consultar(
+    `SELECT id_rutina FROM rutinas WHERE id_cliente = ? AND estado = 'activa'`,
+    [idCliente]
+  );
+  return filas[0] ? obtenerPorId(filas[0].id_rutina) : null;
+}

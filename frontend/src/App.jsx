@@ -24,6 +24,8 @@ import Asignaciones from './pages/Asignaciones';
 import Ejercicios from './pages/Ejercicios';
 import Rutinas from './pages/Rutinas';
 import ObjetivosProgreso from './pages/ObjetivosProgreso';
+import MiRutina from './pages/MiRutina';
+import MiProgreso from './pages/MiProgreso';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -188,6 +190,23 @@ export default function App() {
           element={
             <RutaRol roles={['cliente']}>
               <MisAccesos />
+            </RutaRol>
+          }
+        />
+        {/* Rutina y progreso propios (Sprint 3, US-S3-05): solo cliente. */}
+        <Route
+          path="/mi-rutina"
+          element={
+            <RutaRol roles={['cliente']}>
+              <MiRutina />
+            </RutaRol>
+          }
+        />
+        <Route
+          path="/mi-progreso"
+          element={
+            <RutaRol roles={['cliente']}>
+              <MiProgreso />
             </RutaRol>
           }
         />

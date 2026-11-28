@@ -25,6 +25,8 @@ const OPCIONES = [
   { ruta: '/membresias', texto: 'Membresías', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/tipos-membresia', texto: 'Tipos de membresía', roles: ['administrador'] },
   { ruta: '/pagos', texto: 'Pagos', roles: ['administrador', 'recepcionista'] },
+  { ruta: '/mi-rutina', texto: 'Mi rutina', roles: ['cliente'] },
+  { ruta: '/mi-progreso', texto: 'Mi progreso', roles: ['cliente'] },
   { ruta: '/mis-pagos', texto: 'Mis pagos', roles: ['cliente'] },
   { ruta: '/accesos', texto: 'Accesos', roles: ['administrador', 'recepcionista', 'entrenador'] },
   { ruta: '/mis-accesos', texto: 'Mis accesos', roles: ['cliente'] },
