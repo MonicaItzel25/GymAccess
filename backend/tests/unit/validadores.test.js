@@ -7,6 +7,10 @@ import { validationResult } from 'express-validator';
 import { reglasCrearUsuario, reglasModificarUsuario } from '../../src/validators/usuario.validators.js';
 import { reglasCrearCliente } from '../../src/validators/cliente.validators.js';
 import { reglasLogin } from '../../src/validators/auth.validators.js';
+import { reglasCrearRutina } from '../../src/validators/rutina.validators.js';
+import { reglasCrearProgreso } from '../../src/validators/progreso.validators.js';
+import { reglasPeriodo } from '../../src/validators/dashboard.validators.js';
+import { reglasConsultarAuditoria } from '../../src/validators/auditoria.validators.js';
 
 /** Ejecuta una cadena de reglas sobre un cuerpo falso y devuelve los errores. */
 async function ejecutarReglas(reglas, body) {
@@ -160,5 +164,93 @@ describe('Validación de clientes', () => {
       telefono: 'abc-#!',
     });
     expect(errores.some((e) => e.msg.includes('teléfono'))).toBe(true);
+  });
+});
+
+/** Ejecuta las reglas sobre parámetros de consulta falsos. */
+async function erroresDeConsulta(reglas, query) {
+  const req = { query, body: {}, params: {} };
+  for (const regla of reglas) {
+    await regla.run(req);
+  }
+  return validationResult(req).array();
+}
+
+describe('Validación de rutinas (Sprint 3)', () => {
+  const rutina = (fila = {}) => ({
+    id_cliente: 1,
+    nombre: 'Rutina',
+    ejercicios: [{ id_ejercicio: 1, series: 3, repeticiones: 10, ...fila }],
+  });
+
+  it.each([
+    ['series', 1], ['series', 999], ['repeticiones', 1], ['repeticiones', 999],
+    ['peso_recomendado', 0], ['peso_recomendado', 999.99], ['peso_recomendado', null],
+    ['descanso_segundos', 0], ['descanso_segundos', 3600],
+  ])('test_acepta_%s_igual_a_%s', async (campo, valor) => {
+    expect(await ejecutarReglas(reglasCrearRutina, rutina({ [campo]: valor }))).toHaveLength(0);
+  });
+
+  it.each([
+    ['series', 0], ['series', 1000], ['repeticiones', 0], ['repeticiones', 1000],
+    ['peso_recomendado', -1], ['peso_recomendado', 1000], ['descanso_segundos', -1],
+    ['descanso_segundos', 3601], ['id_ejercicio', 0], ['instrucciones', ''], ['orden', 0],
+  ])('test_rechaza_%s_igual_a_%s', async (campo, valor) => {
+    const errores = await ejecutarReglas(reglasCrearRutina, rutina({ [campo]: valor }));
+    expect(errores.length).toBeGreaterThan(0);
+  });
+
+  it('test_exige_al_menos_un_ejercicio', async () => {
+    const errores = await ejecutarReglas(reglasCrearRutina, { ...rutina(), ejercicios: [] });
+    expect(errores[0].msg).toBe('La rutina debe incluir al menos un ejercicio');
+  });
+});
+
+describe('Validación de progresos (Sprint 3)', () => {
+  const progreso = (campos) => ({ id_cliente: 1, fecha: '2026-11-20', ...campos });
+
+  it.each([
+    ['un_valor_en_cero', { valor_numerico: 0 }],
+    ['solo_un_avance', { avance: 'Mejora' }],
+  ])('test_acepta_%s', async (_caso, campos) => {
+    expect(await ejecutarReglas(reglasCrearProgreso, progreso(campos))).toHaveLength(0);
+  });
+
+  it.each([
+    ['sin_valor_ni_avance', {}],
+    ['con_avance_en_blanco', { avance: '   ' }],
+  ])('test_rechaza_una_entrada_%s', async (_caso, campos) => {
+    const errores = await ejecutarReglas(reglasCrearProgreso, progreso(campos));
+    expect(errores.some((e) => e.msg === 'Indica un valor o un avance medido')).toBe(true);
+  });
+});
+
+describe('Filtros de periodo y de auditoría (Sprint 3)', () => {
+  it.each([
+    ['dashboard', reglasPeriodo],
+    ['auditoría', reglasConsultarAuditoria],
+  ])('test_%s_acepta_un_periodo_valido_y_la_ausencia_de_filtros', async (_nombre, reglas) => {
+    expect(await erroresDeConsulta(reglas, {})).toHaveLength(0);
+    expect(await erroresDeConsulta(reglas, { desde: '2026-11-01', hasta: '2026-11-01' })).toHaveLength(0);
+  });
+
+  it.each([
+    ['dashboard', reglasPeriodo],
+    ['auditoría', reglasConsultarAuditoria],
+  ])('test_%s_rechaza_fechas_inexistentes', async (_nombre, reglas) => {
+    const errores = await erroresDeConsulta(reglas, { desde: '2026-02-30' });
+    expect(errores[0].msg).toBe('El periodo de fechas es inválido');
+  });
+
+  it('test_la_auditoria_rechaza_un_periodo_invertido_y_admite_fecha_con_hora', async () => {
+    const invertido = await erroresDeConsulta(reglasConsultarAuditoria, {
+      desde: '2026-11-02', hasta: '2026-11-01',
+    });
+    expect(invertido[0].msg).toBe('El periodo de fechas es inválido');
+    expect(await erroresDeConsulta(reglasConsultarAuditoria, {
+      desde: '2026-11-01 08:00', hasta: '2026-11-01T09:30:00',
+    })).toHaveLength(0);
+    expect(await erroresDeConsulta(reglasConsultarAuditoria, { desde: '2026-11-01 25:00' }))
+      .toHaveLength(1);
   });
 });
