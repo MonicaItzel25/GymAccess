@@ -26,6 +26,7 @@ import Rutinas from './pages/Rutinas';
 import ObjetivosProgreso from './pages/ObjetivosProgreso';
 import MiRutina from './pages/MiRutina';
 import MiProgreso from './pages/MiProgreso';
+import Dashboard from './pages/Dashboard';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -190,6 +191,15 @@ export default function App() {
           element={
             <RutaRol roles={['cliente']}>
               <MisAccesos />
+            </RutaRol>
+          }
+        />
+        {/* Dashboard administrativo (Sprint 3, US-S3-06): solo administrador. */}
+        <Route
+          path="/dashboard"
+          element={
+            <RutaRol roles={['administrador']}>
+              <Dashboard />
             </RutaRol>
           }
         />

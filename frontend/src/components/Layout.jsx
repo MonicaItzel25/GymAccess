@@ -15,6 +15,7 @@ import { useAuth } from '../context/AuthContext';
 // Opciones de menú por rol (solo interfaz; el backend valida igualmente).
 const OPCIONES = [
   { ruta: '/', texto: 'Inicio', roles: ['administrador', 'recepcionista', 'entrenador', 'cliente'] },
+  { ruta: '/dashboard', texto: 'Dashboard', roles: ['administrador'] },
   { ruta: '/usuarios', texto: 'Usuarios', roles: ['administrador'] },
   { ruta: '/entrenadores', texto: 'Entrenadores', roles: ['administrador'] },
   { ruta: '/asignaciones', texto: 'Asignaciones', roles: ['administrador', 'recepcionista'] },

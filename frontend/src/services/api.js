@@ -290,4 +290,12 @@ export const api = {
   obtenerMiRutina: () => solicitud('/mi-entrenamiento/rutina'),
   obtenerMisObjetivos: () => solicitud('/mi-entrenamiento/objetivos'),
   obtenerMisProgresos: () => solicitud('/mi-entrenamiento/progresos'),
+  // --- Dashboard administrativo (Sprint 3, US-S3-06) ---
+  obtenerDashboard: ({ desde, hasta } = {}) => {
+    const consulta = new URLSearchParams();
+    if (desde) consulta.set('desde', desde);
+    if (hasta) consulta.set('hasta', hasta);
+    const sufijo = consulta.toString() ? `?${consulta.toString()}` : '';
+    return solicitud(`/dashboard${sufijo}`);
+  },
 };

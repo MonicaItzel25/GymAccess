@@ -23,6 +23,7 @@ import rutinaRoutes from './routes/rutina.routes.js';
 import objetivoRoutes from './routes/objetivo.routes.js';
 import progresoRoutes from './routes/progreso.routes.js';
 import miEntrenamientoRoutes from './routes/miEntrenamiento.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 
 export function crearApp() {
   const app = express();
@@ -66,6 +67,8 @@ export function crearApp() {
   app.use('/api/progresos', progresoRoutes);
   // Rutina y progreso propios del cliente (Sprint 3, US-S3-05).
   app.use('/api/mi-entrenamiento', miEntrenamientoRoutes);
+  // Dashboard administrativo (Sprint 3, US-S3-06).
+  app.use('/api/dashboard', dashboardRoutes);
 
   // Respuesta para rutas desconocidas (antes del manejador de errores).
   app.use((req, res) => {

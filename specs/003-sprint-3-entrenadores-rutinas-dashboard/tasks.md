@@ -244,21 +244,23 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T081 [P] [US7] Prueba de contrato en `backend/tests/contract/dashboard.contract.test.js`: esquema de grupos de `contracts/api.md` §8, fechas invertidas 400 (US-S3-06.3), por defecto mes en curso, 403 para recepcionista/entrenador/cliente (US-S3-06.5)
-- [ ] T082 [P] [US7] Prueba de integración en `backend/tests/integration/dashboard.integration.test.js`: los indicadores coinciden con los registros existentes (SC-006), «clientes activos» sigue la vigencia real de membresías por fechas (FR-027), «por vencer» usa 7 días (Q3), «vencidas» agrupa estados no `activa` como `suspendida` y los tres contadores suman el total (FR-027), periodo vacío devuelve ceros (US-S3-06.4) y la pantalla no expone detalle individual de rutinas (Q4)
-- [ ] T083 [P] [US7] Prueba frontend en `frontend/src/pages/Dashboard.test.jsx`: indicadores por grupos, filtro de fechas y estado de ceros
+- [X] T081 [P] [US7] Prueba de contrato en `backend/tests/contract/dashboard.contract.test.js`: esquema de grupos de `contracts/api.md` §8, fechas invertidas 400 (US-S3-06.3), por defecto mes en curso, 403 para recepcionista/entrenador/cliente (US-S3-06.5)
+- [X] T082 [P] [US7] Prueba de integración en `backend/tests/integration/dashboard.integration.test.js`: los indicadores coinciden con los registros existentes (SC-006), «clientes activos» sigue la vigencia real de membresías por fechas (FR-027), «por vencer» usa 7 días (Q3), «vencidas» agrupa estados no `activa` como `suspendida` y los tres contadores suman el total (FR-027), periodo vacío devuelve ceros (US-S3-06.4) y la pantalla no expone detalle individual de rutinas (Q4)
+- [X] T083 [P] [US7] Prueba frontend en `frontend/src/pages/Dashboard.test.jsx`: indicadores por grupos, filtro de fechas y estado de ceros
 
 ### Implementación para la Historia 7
 
-- [ ] T084 [P] [US7] Crear el modelo `backend/src/models/dashboard.model.js` con las consultas agregadas de `data-model.md` §7 sobre `clientes`, `membresias`, `pagos`, `accesos`, `entrenadores`, `asignaciones_entrenador`, `rutinas`, `objetivos` y `progresos`, acotadas por periodo y usando los índices existentes
-- [ ] T085 [US7] Crear el servicio `backend/src/services/dashboard.service.js`: periodo por defecto mes en curso, rechazo de `desde > hasta` (FR-026), vigencia de membresías con `backend/src/utils/fechas.js` (FR-027) y umbral «por vencer» de 7 días (Q3)
-- [ ] T086 [US7] Crear el controlador `backend/src/controllers/dashboard.controller.js`
-- [ ] T087 [US7] Crear las rutas `backend/src/routes/dashboard.routes.js` (`GET /` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/dashboard`
-- [ ] T088 [P] [US7] Añadir el método `obtenerDashboard` en `frontend/src/services/api.js` con parámetros `desde`/`hasta`
-- [ ] T089 [US7] Crear la pantalla `frontend/src/pages/Dashboard.jsx` (indicadores por grupos con el esquema de `contracts/api.md` §8, filtro de fechas por defecto mes en curso, ceros sin datos ficticios, sin enlaces a rutinas/progresos individuales (Q4))
-- [ ] T090 [US7] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`, sin alterar la pantalla de inicio existente (FR-029)
+- [X] T084 [P] [US7] Crear el modelo `backend/src/models/dashboard.model.js` con las consultas agregadas de `data-model.md` §7 sobre `clientes`, `membresias`, `pagos`, `accesos`, `entrenadores`, `asignaciones_entrenador`, `rutinas`, `objetivos` y `progresos`, acotadas por periodo y usando los índices existentes
+- [X] T085 [US7] Crear el servicio `backend/src/services/dashboard.service.js`: periodo por defecto mes en curso, rechazo de `desde > hasta` (FR-026), vigencia de membresías con `backend/src/utils/fechas.js` (FR-027) y umbral «por vencer» de 7 días (Q3)
+- [X] T086 [US7] Crear el controlador `backend/src/controllers/dashboard.controller.js`
+- [X] T087 [US7] Crear las rutas `backend/src/routes/dashboard.routes.js` (`GET /` → `autorizar('administrador')`) y montarlas en `backend/src/app.js` bajo `/api/dashboard`
+- [X] T088 [P] [US7] Añadir el método `obtenerDashboard` en `frontend/src/services/api.js` con parámetros `desde`/`hasta`
+- [X] T089 [US7] Crear la pantalla `frontend/src/pages/Dashboard.jsx` (indicadores por grupos con el esquema de `contracts/api.md` §8, filtro de fechas por defecto mes en curso, ceros sin datos ficticios, sin enlaces a rutinas/progresos individuales (Q4))
+- [X] T090 [US7] Registrar la ruta y el menú solo para administrador en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`, sin alterar la pantalla de inicio existente (FR-029)
 
 **Punto de verificación**: Historia 7 funcional; el administrador consolida datos reales de los Sprints 1–3.
+
+**Registro (2026-11-28)**: T081–T090 implementadas y verificadas con pruebas automáticas (backend 363/363, frontend 93/93, build correcto). Las pruebas del backend fallaron antes de implementar. Criterios aplicados donde el contrato no precisaba: `adeudosPendientes` es el importe actual con la regla de adeudos del Sprint 2; `clientesSinRutinaActiva` cuenta clientes con ficha activa; las membresías, los adeudos y los estados de entrenamiento reflejan la situación de hoy. Pendiente: recorrido manual en navegador (T109).
 
 ---
 
