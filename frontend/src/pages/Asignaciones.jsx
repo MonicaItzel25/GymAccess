@@ -326,43 +326,45 @@ export default function Asignaciones() {
             onRetry={assignments.reload}
           />
         )}
-        <table className="tabla">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Entrenador</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assignments.data?.length === 0 && !assignments.loading && !assignments.error && (
+        <div className="tabla-desplazable">
+          <table className="tabla">
+            <thead>
               <tr>
-                <td colSpan={6}>No hay asignaciones registradas.</td>
+                <th>Cliente</th>
+                <th>Entrenador</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
-            )}
-            {(assignments.data ?? []).map((asignacion) => (
-              <tr key={asignacion.id_asignacion}>
-                <td>{`${asignacion.cliente_nombre} ${asignacion.cliente_apellido}`}</td>
-                <td>{asignacion.entrenador_nombre}</td>
-                <td>{asignacion.fecha_inicio}</td>
-                <td>{asignacion.fecha_fin || '—'}</td>
-                <td>{asignacion.estado === 'vigente' ? 'Vigente' : 'Finalizada'}</td>
-                <td>
-                  {asignacion.estado === 'vigente' ? (
-                    <button type="button" onClick={() => finalizar(asignacion)} disabled={processing}>
-                      Finalizar
-                    </button>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {assignments.data?.length === 0 && !assignments.loading && !assignments.error && (
+                <tr>
+                  <td colSpan={6}>No hay asignaciones registradas.</td>
+                </tr>
+              )}
+              {(assignments.data ?? []).map((asignacion) => (
+                <tr key={asignacion.id_asignacion}>
+                  <td>{`${asignacion.cliente_nombre} ${asignacion.cliente_apellido}`}</td>
+                  <td>{asignacion.entrenador_nombre}</td>
+                  <td>{asignacion.fecha_inicio}</td>
+                  <td>{asignacion.fecha_fin || '—'}</td>
+                  <td>{asignacion.estado === 'vigente' ? 'Vigente' : 'Finalizada'}</td>
+                  <td>
+                    {asignacion.estado === 'vigente' ? (
+                      <button type="button" onClick={() => finalizar(asignacion)} disabled={processing}>
+                        Finalizar
+                      </button>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </>
   );

@@ -247,40 +247,42 @@ export default function Entrenadores() {
             onRetry={trainers.reload}
           />
         )}
-        <table className="tabla">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Especialidad</th>
-              <th>Teléfono</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trainers.data?.length === 0 && !trainers.loading && !trainers.error && (
+        <div className="tabla-desplazable">
+          <table className="tabla">
+            <thead>
               <tr>
-                <td colSpan={5}>No hay entrenadores registrados.</td>
+                <th>Nombre</th>
+                <th>Especialidad</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
-            )}
-            {(trainers.data ?? []).map((entrenador) => (
-              <tr key={entrenador.id_entrenador}>
-                <td>{entrenador.nombre}</td>
-                <td>{entrenador.especialidad || '—'}</td>
-                <td>{entrenador.telefono || '—'}</td>
-                <td>{entrenador.estado === 'activo' ? 'Activo' : 'Inactivo'}</td>
-                <td>
-                  <button type="button" onClick={() => prepararEdicion(entrenador)} disabled={processing}>
-                    Editar
-                  </button>{' '}
-                  <button type="button" onClick={() => alternarEstado(entrenador)} disabled={processing}>
-                    {entrenador.estado === 'activo' ? 'Desactivar' : 'Activar'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {trainers.data?.length === 0 && !trainers.loading && !trainers.error && (
+                <tr>
+                  <td colSpan={5}>No hay entrenadores registrados.</td>
+                </tr>
+              )}
+              {(trainers.data ?? []).map((entrenador) => (
+                <tr key={entrenador.id_entrenador}>
+                  <td>{entrenador.nombre}</td>
+                  <td>{entrenador.especialidad || '—'}</td>
+                  <td>{entrenador.telefono || '—'}</td>
+                  <td>{entrenador.estado === 'activo' ? 'Activo' : 'Inactivo'}</td>
+                  <td>
+                    <button type="button" onClick={() => prepararEdicion(entrenador)} disabled={processing}>
+                      Editar
+                    </button>{' '}
+                    <button type="button" onClick={() => alternarEstado(entrenador)} disabled={processing}>
+                      {entrenador.estado === 'activo' ? 'Desactivar' : 'Activar'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </>
   );
