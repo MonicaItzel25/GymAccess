@@ -27,6 +27,7 @@ import ObjetivosProgreso from './pages/ObjetivosProgreso';
 import MiRutina from './pages/MiRutina';
 import MiProgreso from './pages/MiProgreso';
 import Dashboard from './pages/Dashboard';
+import PersonalAsignado from './pages/PersonalAsignado';
 
 /** Envuelve las rutas que requieren sesión iniciada. */
 function RutaProtegida() {
@@ -200,6 +201,15 @@ export default function App() {
           element={
             <RutaRol roles={['administrador']}>
               <Dashboard />
+            </RutaRol>
+          }
+        />
+        {/* Personal asignado (Sprint 3, US-S3-07). */}
+        <Route
+          path="/personal-asignado"
+          element={
+            <RutaRol roles={['administrador', 'recepcionista']}>
+              <PersonalAsignado />
             </RutaRol>
           }
         />

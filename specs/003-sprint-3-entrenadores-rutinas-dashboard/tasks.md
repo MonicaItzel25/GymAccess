@@ -301,18 +301,20 @@ description: "Lista de tareas de implementación del Sprint 3 — Entrenadores, 
 
 > **NOTA**: escribir estas pruebas PRIMERO y verificar que FALLAN antes de la implementación.
 
-- [ ] T100 [P] [US9] Prueba de contrato en `backend/tests/contract/personal-asignado.contract.test.js`: `GET /api/entrenadores` incluye `carga` y `GET /api/asignaciones?vigentes=true` devuelve la lista por entrenador (FR-008), entrenador sin asignados con carga 0 (US-S3-07.2), 403 para cliente en ambos endpoints (US-S3-07.3)
-- [ ] T101 [P] [US9] Prueba de integración en `backend/tests/integration/personal-asignado.integration.test.js`: la carga coincide con el número de asignaciones vigentes reales (SC-006 aplicado a esta vista) y cambia al finalizar una asignación
-- [ ] T102 [P] [US9] Prueba frontend en `frontend/src/pages/PersonalAsignado.test.jsx`: entrenadores con carga, lista de asignados y carga 0
+- [X] T100 [P] [US9] Prueba de contrato en `backend/tests/contract/personal-asignado.contract.test.js`: `GET /api/entrenadores` incluye `carga` y `GET /api/asignaciones?vigentes=true` devuelve la lista por entrenador (FR-008), entrenador sin asignados con carga 0 (US-S3-07.2), 403 para cliente en ambos endpoints (US-S3-07.3)
+- [X] T101 [P] [US9] Prueba de integración en `backend/tests/integration/personal-asignado.integration.test.js`: la carga coincide con el número de asignaciones vigentes reales (SC-006 aplicado a esta vista) y cambia al finalizar una asignación
+- [X] T102 [P] [US9] Prueba frontend en `frontend/src/pages/PersonalAsignado.test.jsx`: entrenadores con carga, lista de asignados y carga 0
 
 ### Implementación para la Historia 9
 
-- [ ] T103 [US9] Ampliar `backend/src/models/entrenador.model.js` con la carga de clientes asignados vigentes por entrenador (contador sobre `asignaciones_entrenador.esta_vigente`, FR-008)
-- [ ] T104 [US9] Ampliar `backend/src/services/entrenador.service.js` para poblar la carga en el listado de `GET /api/entrenadores`
-- [ ] T105 [P] [US9] Crear la pantalla `frontend/src/pages/PersonalAsignado.jsx` (reutilizando `listarEntrenadores` y `listarAsignaciones` de `frontend/src/services/api.js`: entrenadores con su cantidad de clientes y lista de asignados, carga 0 visible, estados vacíos)
-- [ ] T106 [US9] Registrar la ruta y el menú para administrador y recepcionista en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
+- [X] T103 [US9] Ampliar `backend/src/models/entrenador.model.js` con la carga de clientes asignados vigentes por entrenador (contador sobre `asignaciones_entrenador.esta_vigente`, FR-008)
+- [X] T104 [US9] Ampliar `backend/src/services/entrenador.service.js` para poblar la carga en el listado de `GET /api/entrenadores`
+- [X] T105 [P] [US9] Crear la pantalla `frontend/src/pages/PersonalAsignado.jsx` (reutilizando `listarEntrenadores` y `listarAsignaciones` de `frontend/src/services/api.js`: entrenadores con su cantidad de clientes y lista de asignados, carga 0 visible, estados vacíos)
+- [X] T106 [US9] Registrar la ruta y el menú para administrador y recepcionista en `frontend/src/App.jsx` y `frontend/src/components/Layout.jsx`
 
 **Punto de verificación**: Historia 9 funcional; todas las historias del sprint completas.
+
+**Registro (2026-11-28)**: T100–T106 implementadas y verificadas con pruebas automáticas (backend 373/373, frontend 105/105, build correcto). La historia 8 (auditoría) sigue pendiente, por lo que aún no están completas todas las historias. Pendiente: recorrido manual en navegador (T109).
 
 ---
 

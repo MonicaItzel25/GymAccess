@@ -16,9 +16,17 @@ const JOINS = `
   JOIN usuarios u ON u.id_usuario = e.id_usuario
 `;
 
-/** Lista los perfiles de entrenador con el nombre de su cuenta. */
+/** Lista los perfiles de entrenador con el nombre de su cuenta y su `carga`:
+ *  la cantidad de clientes con asignación vigente (US-S3-07, FR-008). */
 export async function listar() {
-  return consultar(`SELECT ${COLUMNAS_LISTADO} ${JOINS} ORDER BY u.nombre`);
+  const filas = await consultar(
+    `SELECT ${COLUMNAS_LISTADO},
+       (SELECT COUNT(*) FROM asignaciones_entrenador a
+         WHERE a.id_entrenador = e.id_entrenador AND a.estado = 'vigente') AS carga
+     ${JOINS}
+     ORDER BY u.nombre`
+  );
+  return filas.map((fila) => ({ ...fila, carga: Number(fila.carga) }));
 }
 
 /** Devuelve un perfil por identificador con el nombre de su cuenta, o null. */
